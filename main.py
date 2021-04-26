@@ -14,7 +14,6 @@ from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 def get_train(spark, netID, frac):
     df_train = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
-    print(len(df_train))
     df_train = df_train.sample(True, .01)
     return df_train
 
@@ -27,7 +26,8 @@ def main(spark, netID):
     '''
     print('Final Project loading ')
     df_train = get_train(spark, netID, .01)
-    print(df_train.shape)
+    print((df_train.count(), len(df_train.columns)))
+
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
