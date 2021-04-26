@@ -12,10 +12,10 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 
-def get_train(spark, netID, frac):
-    df_train = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
-    df_train = df_train.sample(True, .01)
-    return df_train
+def get_data(spark, netID, file_name, frac_keep):
+    df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}.parquet')
+    df = df_train.sample(False, frac_keep)
+    return df
 
 def main(spark, netID):
     '''Main routine for Final Project
@@ -24,9 +24,13 @@ def main(spark, netID):
     spark : SparkSession object
     netID : string, netID of student to find files in HDFS
     '''
-    print('Final Project loading ')
-    df_train = get_train(spark, netID, .01)
+    print('Loading in files')
+
+    df_train = get_train(spark, netID, 'cf_train' .01)
     print((df_train.count(), len(df_train.columns)))
+
+    df_val = get_train(spark, netID, 'cf_validation' .01)
+    df_test = get_train(spark, netID, 'cf_test' .01)
 
 
 # Only enter this block if we're in main
