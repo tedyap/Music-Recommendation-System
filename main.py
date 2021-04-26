@@ -26,7 +26,7 @@ def main(spark, netID):
     '''
     print('Final Project loading ')
     df_train = get_train(spark, netID, .01)
-    print(len(df_train))
+    print(df_train.shape)
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
