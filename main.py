@@ -12,6 +12,11 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 
+def get_train(spark, netID, frac):
+    df_train = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
+    df_train = df_train.sample(True, .01)
+    return df_train
+
 def main(spark, netID):
     '''Main routine for Final Project
     Parameters
@@ -20,7 +25,7 @@ def main(spark, netID):
     netID : string, netID of student to find files in HDFS
     '''
     print('Final Project loading ')
-
+    df_train = get_train(spark, netID, .01)
 
 
 # Only enter this block if we're in main
