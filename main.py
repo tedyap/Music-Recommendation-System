@@ -14,7 +14,7 @@ from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 def get_data(spark, netID, file_name, frac_keep):
     df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}.parquet')
-    df = df_train.sample(False, frac_keep)
+    df = df.sample(False, frac_keep)
     return df
 
 def main(spark, netID):
