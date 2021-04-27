@@ -26,11 +26,11 @@ def main(spark, netID):
     '''
     print('Loading in files')
 
-    df_train = get_data(spark, 'cf_train', 1)
+    df_train = get_data(spark, 'cf_train', 1.0)
     print((df_train.count(), len(df_train.columns)))
 
-    df_val = get_data(spark, 'cf_validation', 1)
-    df_test = get_data(spark, 'cf_test', 1)
+    df_val = get_data(spark, 'cf_validation', 1.0)
+    df_test = get_data(spark, 'cf_test', 1.0)
 
     df_train.show()
 
