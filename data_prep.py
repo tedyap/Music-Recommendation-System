@@ -12,9 +12,9 @@ from main import get_data
 def main(spark):
     partitions = 1000
 
-    train_data = get_data(spark, 'cf_train', .01)
-    validation_data = get_data(spark, 'cf_validation', .01)
-    test_data = get_data(spark, 'cf_test', .01)
+    train_data = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_train.parquet')
+    validation_data = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_validation.parquet')
+    test_data = spark.read.parquet('hdfs:/user/bm106/pub/MSD/cf_test.parquet')
 
     # train_len = train.count()
     # val_len = val.count()
