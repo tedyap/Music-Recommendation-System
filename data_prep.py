@@ -12,9 +12,9 @@ def main(spark):
     for column in ['user', 'track']:
         indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='keep')
         indexed = indexer.fit(train)
-        train = indexed.tranform(train)
-        val = indexed.tranform(val)
-        test = indexed.tranform(test)
+        train = indexed.transform(train)
+        val = indexed.transform(val)
+        test = indexed.transform(test)
         indexer.save(f'{column}_indexer')
 
     train = train.repartition(partitions, 'user_id').select(['user_idx', 'count', 'track_idx'])
