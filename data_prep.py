@@ -12,13 +12,9 @@ from main import get_data
 def main(spark):
     partitions = 1000
 
-    train = get_data(spark, 'cf_train', .01)
-    val = get_data(spark, 'cf_validation', .01)
-    test = get_data(spark, 'cf_test', .01)
-
-    train_len = train.count()
-    val_len = val.count()
-    test_len = test.count()
+    train = get_data(spark, 'cf_train', 1.0)
+    val = get_data(spark, 'cf_validation', 1.0)
+    test = get_data(spark, 'cf_test', 1.0)
 
     print('Begin indexing...')
 
@@ -33,17 +29,14 @@ def main(spark):
     print('Finished indexing...')
 
     train = train.repartition(partitions, 'user_id').select(['user_idx', 'count', 'track_idx'])
-    assert train_len == train.count()
     train.write.parquet(path='processed_data/cf_train_idx.parquet', mode='overwrite')
     train.unpersist()
 
     val = val.repartition(partitions, 'user_id').select(['user_idx', 'count', 'track_idx'])
-    assert val_len == val.count()
     val.write.parquet(path='processed_data/cf_validation_idx.parquet', mode='overwrite')
     val.unpersist()
 
     test = test.repartition(partitions, 'user_id').select(['user_idx', 'count', 'track_idx'])
-    assert test_len == test.count()
     test.write.parquet(path='processed_data/cf_test_idx.parquet', mode='overwrite')
     test.unpersist()
 
