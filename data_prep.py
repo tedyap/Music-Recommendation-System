@@ -6,7 +6,7 @@ def main(spark):
     partitions = 1000
 
     train = get_data(spark, 'cf_train', .01)
-    val = get_data(spark, 'cf_val', .01)
+    val = get_data(spark, 'cf_validation', .01)
     test = get_data(spark, 'cf_test', .01)
 
     for column in ['user', 'track']:
