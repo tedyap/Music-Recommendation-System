@@ -6,16 +6,14 @@ Usage:
 
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import StringIndexer
-from main import get_data
 
 
 def main(spark):
-    partitions = 1000
+    train = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/cf_train.parquet')
+    val = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/cf_validation.parquet')
+    test = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/cf_test.parquet')
 
-    train = get_data(spark, 'cf_train', 1.0)
-    val = get_data(spark, 'cf_validation', 1.0)
-    test = get_data(spark, 'cf_test', 1.0)
-
+    print(train.count())
     print('Begin indexing...')
 
     for column in ['user', 'track']:
@@ -29,15 +27,15 @@ def main(spark):
     print('Finished indexing...')
 
     train = train.select(['user_idx', 'count', 'track_idx'])
-    train.write.parquet(path='processed_data1/cf_train_idx.parquet', mode='overwrite')
+    train.write.parquet(path='processed_data/cf_train_idx.parquet', mode='overwrite')
     train.unpersist()
 
     val = val.select(['user_idx', 'count', 'track_idx'])
-    val.write.parquet(path='processed_data1/cf_validation_idx.parquet', mode='overwrite')
+    val.write.parquet(path='processed_data/cf_validation_idx.parquet', mode='overwrite')
     val.unpersist()
 
     test = test.select(['user_idx', 'count', 'track_idx'])
-    test.write.parquet(path='processed_data1/cf_test_idx.parquet', mode='overwrite')
+    test.write.parquet(path='processed_data/cf_test_idx.parquet', mode='overwrite')
     test.unpersist()
 
 
