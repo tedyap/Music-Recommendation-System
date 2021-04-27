@@ -21,7 +21,7 @@ def main(spark):
         train = indexed.transform(train)
         val = indexed.transform(val)
         test = indexed.transform(test)
-        indexer.save(f'{column}_indexer')
+        indexer.write().overwrite().save(f'{column}_indexer')
 
     print('Finished indexing...')
 
