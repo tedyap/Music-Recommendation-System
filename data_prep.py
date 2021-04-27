@@ -1,7 +1,7 @@
 """
 Spark job to perform string indexing
 Usage:
-    $ spark-submit --py-files main.py data_prep.py
+    $ spark-submit data_prep.py
 """
 
 from pyspark.sql import SparkSession

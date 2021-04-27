@@ -13,7 +13,7 @@ from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 
 def get_data(spark, file_name, frac_keep):
-    df = spark.read.parquet(f'hdfs:/user/tyy231/processed_data/{file_name}_idx.parquet')
+    df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}.parquet')
     df = df.sample(False, frac_keep)
     return df
 
