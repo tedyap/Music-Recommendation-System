@@ -13,9 +13,6 @@ def main(spark):
     val = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/cf_validation.parquet')
     test = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/cf_test.parquet')
 
-    print(train.count())
-    print('Begin indexing...')
-
     for column in ['user', 'track']:
         indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='keep')
         indexed = indexer.fit(train)
@@ -24,10 +21,7 @@ def main(spark):
         test = indexed.transform(test)
         indexer.write().overwrite().save(f'{column}_indexer')
 
-    print('Finished indexing...')
-
     train = train.select(['user_idx', 'count', 'track_idx'])
-    print(train.count())
     train.write.parquet(path='processed_data/cf_train_idx.parquet', mode='overwrite')
     train.unpersist()
 
