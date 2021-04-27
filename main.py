@@ -14,10 +14,10 @@ from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 def get_data(spark, netID, file_name, frac_keep):
     df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}.parquet')
-    df = df.sample(False, frac_keep)
+    df = df.sample(False, frac_keep, 1)
     return df
 
-def main(spark, netID):
+def main(spark, netID, SUBSET_SIZE):
     '''Main routine for Final Project
     Parameters
     ----------
@@ -26,11 +26,11 @@ def main(spark, netID):
     '''
     print('Loading in files')
 
-    df_train = get_data(spark, netID, 'cf_train', .01)
+    df_train = get_data(spark, netID, 'cf_train', SUBSET_SIZE)
     print((df_train.count(), len(df_train.columns)))
 
-    df_val = get_data(spark, netID, 'cf_validation', .01)
-    df_test = get_data(spark, netID, 'cf_test', .01)
+    df_val = get_data(spark, netID, 'cf_validation', SUBSET_SIZE)
+    df_test = get_data(spark, netID, 'cf_test', SUBSET_SIZE)
 
 
 # Only enter this block if we're in main
@@ -42,5 +42,6 @@ if __name__ == "__main__":
     # Get user netID from the command line
     netID = getpass.getuser()
 
+    SUBSET_SIZE = .01
     # Call our main routine
-    main(spark, netID)
+    main(spark, netID, SUBSET_SIZE)
