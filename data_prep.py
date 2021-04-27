@@ -27,6 +27,7 @@ def main(spark):
     print('Finished indexing...')
 
     train = train.select(['user_idx', 'count', 'track_idx'])
+    print(train.count())
     train.write.parquet(path='processed_data/cf_train_idx.parquet', mode='overwrite')
     train.unpersist()
 
