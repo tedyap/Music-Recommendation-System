@@ -42,7 +42,7 @@ def ALS(training,test,regularizationparam,userCol,itemCol,ratingCol):
     predictions = model.transform(test)
     evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating", predictionCol="prediction")
     rmse = evaluator.evaluate(predictions)
-    return RMSE
+    return rmse
 
 if __name__ == "__main__":
     spark = SparkSession.builder.appName('data_prep').getOrCreate()
