@@ -12,6 +12,7 @@ from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
+from pyspark.sql import Row
 
 
 def get_data(spark, file_name, frac_keep):
@@ -59,12 +60,16 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
             model = als.fit(train)
+           
         
             predictions = model.transform(val)
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
             rmse = evaluator.evaluate(predictions)
+    
             
             print('Current model: Rank:'+str(rank)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
+            
+            userRecs = model.recommendForAllUsers(10)
             
             if count == 0:
                 best_model = model
