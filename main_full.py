@@ -63,8 +63,8 @@ def main_full(spark,SUBSET_SIZE):
            
         
             predictions = model.transform(val)
-            evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
-            rmse = evaluator.evaluate(predictions)
+            evaluator = RegressionEvaluator(labelCol="count", predictionCol="prediction")
+            rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
     
             
             print('Current model: Rank:'+str(rank)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
