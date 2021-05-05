@@ -58,7 +58,7 @@ def main_full(spark,SUBSET_SIZE):
     stats = []
     for rank in ranks:
         for reg in regs:
-            als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
+            als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
            
         
