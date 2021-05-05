@@ -61,9 +61,6 @@ def main_full(spark,SUBSET_SIZE):
             model = als.fit(train)
         
             predictions = model.transform(val)
-            
-            print(predictions[0:5])
-            
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
             rmse = evaluator.evaluate(predictions)
             
