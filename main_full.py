@@ -42,15 +42,14 @@ def main_full(spark,SUBSET_SIZE):
         test = indexed.transform(test)
         indexer.write().overwrite().save(f'{column}_indexer')
 
-    train.show(n=5)
     train = train.select(['user_idx', 'count', 'track_idx'])
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
 
 
     # define paremeter values for parameter tuning
-    ranks = [5, 10, 15]
-    regs = [0.1, 1, 10]
+    ranks = [5]#[5, 10, 15]
+    regs = [0.1]#[0.1, 1, 10]
 
     count = 0
     best_model = None
@@ -63,7 +62,7 @@ def main_full(spark,SUBSET_SIZE):
         
             predictions = model.transform(val)
             
-            predictions.show(n=10)
+            predictions.head()
             
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
             rmse = evaluator.evaluate(predictions)
@@ -88,6 +87,6 @@ if __name__ == "__main__":
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
 
-    SUBSET_SIZE = .01
+    SUBSET_SIZE = .001
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
