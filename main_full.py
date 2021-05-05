@@ -29,21 +29,17 @@ def main_full(spark,SUBSET_SIZE):
     netID : string, netID of student to find files in HDFS
     '''
     # load and sample from datasets
-    df_train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
-    df_val = get_data(spark, 'cf_validation', SUBSET_SIZE)
-    df_test = get_data(spark, 'cf_test', SUBSET_SIZE)
-    
-    df_train.show(n=5)
-    df_val.show(n=5)
-    df_test.show(n=5)
+    train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
+    val = get_data(spark, 'cf_validation', SUBSET_SIZE)
+    test = get_data(spark, 'cf_test', SUBSET_SIZE)
     
     # StringIndexing
     for column in ['user', 'track']:
         indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='error')
-        indexed = indexer.fit(df_train)
-        train = indexed.transform(df_train)
-        val = indexed.transform(df_val)
-        test = indexed.transform(df_test)
+        indexed = indexer.fit(train)
+        train = indexed.transform(train)
+        val = indexed.transform(val)
+        test = indexed.transform(test)
         indexer.write().overwrite().save(f'{column}_indexer')
 
     train.show(n=5)
