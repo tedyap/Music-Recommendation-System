@@ -36,7 +36,7 @@ def main_full(spark,SUBSET_SIZE):
     
     # StringIndexing
     for column in ['user', 'track']:
-        indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='error')
+        indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='keep')
         indexed = indexer.fit(train)
         train = indexed.transform(train)
         val = indexed.transform(val)
