@@ -9,6 +9,9 @@ Usage:
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
+from pyspark.ml.feature import StringIndexer
+from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.ml.recommendation import ALS
 
 
 def get_data(spark, file_name, frac_keep):
