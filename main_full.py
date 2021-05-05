@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+c#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Starter Pyspark Script for students to complete for their Lab 3 Assignment.
 Usage:
@@ -58,13 +58,13 @@ def main_full(spark,SUBSET_SIZE):
     stats = []
     for rank in ranks:
         for reg in regs:
-            als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
+            als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
             model = als.fit(train)
            
         
             predictions = model.transform(val)
-            evaluator = RegressionEvaluator(labelCol="count", predictionCol="prediction")
-            rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
+            evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
+            rmse = evaluator.evaluate(predictions)
     
             
             print('Current model: Rank:'+str(rank)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
