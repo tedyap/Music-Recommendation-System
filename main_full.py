@@ -13,7 +13,7 @@ from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
-    df = spark.read.parquet(f'hdfs:/user/tyy231/processed_data/{file_name}_idx.parquet')
+    df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}_idx.parquet')
     df = df.sample(False, frac_keep, 1)
     return df
     
@@ -26,7 +26,7 @@ def main_full(spark,SUBSET_SIZE):
     netID : string, netID of student to find files in HDFS
     '''
     # load and sample from datasets
-    df_train = get_data(spark, 'cf_train', SUBSET_SIZE)
+    df_train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
     df_val = get_data(spark, 'cf_validation', SUBSET_SIZE)
     df_test = get_data(spark, 'cf_test', SUBSET_SIZE)
     
