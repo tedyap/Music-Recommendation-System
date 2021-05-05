@@ -42,6 +42,7 @@ def main_full(spark,SUBSET_SIZE):
         test = indexed.transform(df_test)
         indexer.write().overwrite().save(f'{column}_indexer')
 
+    train.show(n=5)
     train = train.select(['user_idx', 'count', 'track_idx'])
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
