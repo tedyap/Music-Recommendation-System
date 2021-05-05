@@ -33,6 +33,10 @@ def main_full(spark,SUBSET_SIZE):
     df_val = get_data(spark, 'cf_validation', SUBSET_SIZE)
     df_test = get_data(spark, 'cf_test', SUBSET_SIZE)
     
+    df_train.show(n=5)
+    df_val.show(n=5)
+    df_test.show(n=5)
+    
     # StringIndexing
     for column in ['user', 'track']:
         indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='error')
