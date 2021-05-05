@@ -1,4 +1,4 @@
-c#!/usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Starter Pyspark Script for students to complete for their Lab 3 Assignment.
 Usage:
