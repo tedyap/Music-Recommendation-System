@@ -90,7 +90,7 @@ def main_full(spark,SUBSET_SIZE):
                 if rsme < best_rmse:
                     best_model = model
                     best_rmse = rmse
-                    stats = [rank, reg, rmse]
+                    stats = [rnk, reg, rmse]
     print('Best model: Rank: {}, RegParam: {}, RMSE: {}'.format(*stats))
 
 # Only enter this block if we're in main
