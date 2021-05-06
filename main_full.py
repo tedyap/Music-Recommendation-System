@@ -58,9 +58,9 @@ def main_full(spark,SUBSET_SIZE):
     best_model = None
     best_rmse = None
     stats = []
-    for rank in ranks:
+    for rnk in ranks:
         for reg in regs:
-            als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
+            als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
             model = als.fit(train)
             predictions = model.transform(val)
             
@@ -77,7 +77,7 @@ def main_full(spark,SUBSET_SIZE):
             rmse = evaluator.evaluate(predictions)
     
             
-            print('Current model: Rank:'+str(rank)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
+            print('Current model: Rank:'+str(rnk)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
             
             #userRecs = model.recommendForAllUsers(500).show(5)
             
