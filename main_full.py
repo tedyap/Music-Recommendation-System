@@ -27,7 +27,6 @@ def main_full(spark,SUBSET_SIZE):
     Parameters
     ----------
     spark : SparkSession object
-    netID : string, netID of student to find files in HDFS
     '''
     # load and sample from datasets
     train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
@@ -90,6 +89,6 @@ if __name__ == "__main__":
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
 
-    SUBSET_SIZE = .01
+    SUBSET_SIZE = .001
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
