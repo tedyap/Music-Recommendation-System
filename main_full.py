@@ -14,6 +14,9 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
@@ -59,16 +62,24 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rank, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
             model = als.fit(train)
-           
-        
             predictions = model.transform(val)
+            
+            
+            ### Aaron's Code Here Start####
+            
+            predictions=predictions.withColumn("rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("predictions"))))
+            predictions=predictions.filter(predictions.rank<=500)
+            predictions.show(1000)
+            
+            ### Aaron's Code Here End ####
+            
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
             rmse = evaluator.evaluate(predictions)
     
             
             print('Current model: Rank:'+str(rank)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
             
-            userRecs = model.recommendForAllUsers(500).show(5)
+            #userRecs = model.recommendForAllUsers(500).show(5)
             
             if count == 0:
                 best_model = model
