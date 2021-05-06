@@ -48,8 +48,8 @@ def main_full(spark,SUBSET_SIZE):
 
 
     # define paremeter values for parameter tuning
-    ranks = [5, 10, 15]
-    regs = [0.1, 1, 10]
+    ranks = [5]#[5, 10, 15]
+    regs = [0.1]#[0.1, 1, 10]
 
     count = 0
     best_model = None
@@ -62,14 +62,13 @@ def main_full(spark,SUBSET_SIZE):
            
         
             predictions = model.transform(val)
-            predictions.show(10)
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
             rmse = evaluator.evaluate(predictions)
     
             
             print('Current model: Rank:'+str(rank)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
             
-            userRecs = model.recommendForAllUsers(10)
+            userRecs = model.recommendForAllUsers(500).show(5)
             
             if count == 0:
                 best_model = model
