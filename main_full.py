@@ -67,7 +67,7 @@ def main_full(spark,SUBSET_SIZE):
             
             ### Aaron's Code Here Start####
             
-            predictions=predictions.withColumn("rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("predictions"))))
+            predictions=predictions.withColumn("rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
             predictions=predictions.filter(predictions.rank<=500)
             predictions.show(1000)
             
