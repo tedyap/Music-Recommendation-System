@@ -84,7 +84,7 @@ def main_full(spark,SUBSET_SIZE):
             if count == 0:
                 best_model = model
                 best_rmse = rmse
-                stats = [rank, reg, rmse]
+                stats = [rnk, reg, rmse]
                 count += 1
             else:
                 if rsme < best_rmse:
