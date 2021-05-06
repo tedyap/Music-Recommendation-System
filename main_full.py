@@ -63,6 +63,7 @@ def main_full(spark,SUBSET_SIZE):
            
         
             predictions = model.transform(val)
+            predictions.show(10)
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
             rmse = evaluator.evaluate(predictions)
     
