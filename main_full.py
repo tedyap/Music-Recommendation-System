@@ -48,8 +48,8 @@ def main_full(spark,SUBSET_SIZE):
 
 
     # define paremeter values for parameter tuning
-    ranks = [5]#[5, 10, 15]
-    regs = [0.1]#[0.1, 1, 10]
+    ranks = [5, 10, 15]
+    regs = [0.1, 1, 10]
 
     count = 0
     best_model = None
