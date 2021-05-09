@@ -51,48 +51,7 @@ def main_full(spark,SUBSET_SIZE):
     test = test.select(['user_idx', 'count', 'track_idx'])
 
 
-    # define paremeter values for parameter tuning
-    ranks = [5]#[5, 10, 15]
-    regs = [0.1]#[0.1, 1, 10]
 
-    count = 0
-    best_model = None
-    best_rmse = None
-    stats = []
-    for rnk in ranks:
-        for reg in regs:
-            als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
-            model = als.fit(train)
-            predictions = model.transform(val)
-
-
-            ### Aaron's Code Here Start####
-
-            predictions=predictions.withColumn("rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
-            predictions=predictions.filter(predictions.rank<=500)
-            predictions.show(1000)
-
-            ### Aaron's Code Here End ####
-
-            evaluator = RegressionEvaluator(metricName="rmse", labelCol="count", predictionCol="prediction")
-            rmse = evaluator.evaluate(predictions)
-
-
-            print('Current model: Rank:'+str(rnk)+', RegParam: '+str(reg)+', RMSE: '+str(rmse))
-
-            #userRecs = model.recommendForAllUsers(500).show(5)
-
-            if count == 0:
-                best_model = model
-                best_rmse = rmse
-                stats = [rnk, reg, rmse]
-                count += 1
-            else:
-                if rsme < best_rmse:
-                    best_model = model
-                    best_rmse = rmse
-                    stats = [rnk, reg, rmse]
-    print('Best model: Rank: {}, RegParam: {}, RMSE: {}'.format(*stats))
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
