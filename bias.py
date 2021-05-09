@@ -16,8 +16,7 @@ from pyspark.sql import Row
 
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
-from lenskit.algorithms import bias
-
+import lenskit
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
@@ -50,7 +49,7 @@ def main_full(spark,SUBSET_SIZE):
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
 
-
+    bias.Bias(items=True)
 
 
 # Only enter this block if we're in main
