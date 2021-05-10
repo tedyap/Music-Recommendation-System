@@ -79,8 +79,8 @@ def main_full(spark,SUBSET_SIZE):
                 else:
                     true_dict[row['user_idx']] = [[row['count_rank']],[row['prediction_rank']]]
              
-             list2 = []
-             for k in true_dict:
+            list2 = []
+            for k in true_dict:
                 list2.append(true_dict[k])
                 
             predictionAndLabels = sc.parallelize(list2)
