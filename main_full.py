@@ -83,7 +83,7 @@ def main_full(spark,SUBSET_SIZE):
             for k in true_dict:
                 list2.append(true_dict[k])
                 
-            predictionAndLabels = sc.parallelize(list2)
+            predictionAndLabels = spark.sparkContext.parallelize(list2)
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
             
