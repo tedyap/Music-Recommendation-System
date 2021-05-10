@@ -68,11 +68,15 @@ def main_full(spark,SUBSET_SIZE):
             predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
             predictions=predictions.filter(predictions.prediction_rank<=500)
             
+            
+            print(predictions)
+            
             metrics_df=predictions.select(['prediction_rank','count_rank'])
             metrics = RankingMetrics(metrics_df.rdd)
             MAP=metrics.meanAveragePrecision
             
-            print(MAP)
+            #iterate over each row in predictions dataframe
+            #append ()
             
             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
             rmse = evaluator.evaluate(predictions)
@@ -92,7 +96,27 @@ def main_full(spark,SUBSET_SIZE):
                     best_map = MAP
                     stats = [rnk, reg, rmse, MAP]
     print('Best model: Rank: {}, RegParam: {}, RMSE: {}, MAP: {}'.format(*stats))
-
+    
+    rnk=stats[0]
+    reg=stats[1]
+    
+    als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
+    model = als.fit(train)
+    predictions = model.transform(test)
+    
+    predictions=predictions.withColumn("count_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("count"))))
+    predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
+    predictions=predictions.filter(predictions.prediction_rank<=500)
+            
+    metrics_df=predictions.select(['prediction_rank','count_rank'])
+    metrics = RankingMetrics(metrics_df.rdd)
+    MAP=metrics.meanAveragePrecision
+    
+    evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
+    rmse = evaluator.evaluate(predictions)
+    
+    print('Test Set: Rank:'+str(rnk)+', RegParam: '+str(reg)+', RMSE: '+str(rmse)+"MAP: "+str(MAP))
+    
 # Only enter this block if we're in main
 if __name__ == "__main__":
 
