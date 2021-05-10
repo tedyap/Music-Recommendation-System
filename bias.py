@@ -10,6 +10,9 @@ def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
     df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating'}, inplace=True)
+    print(df.head())
+    df['track'] = df['track'].astype(float)
+    df['user'] = df['user'].astype(float)
     return df
 
 
