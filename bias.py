@@ -11,8 +11,8 @@ def get_data(file_name, frac_keep):
     df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating'}, inplace=True)
     print(df.head())
-    df['track'] = df['track'].astype(float)
-    df['user'] = df['user'].astype(float)
+    df['track_id'] = df['track_id'].astype(float)
+    df['user_id'] = df['user_id'].astype(float)
     return df
 
 
