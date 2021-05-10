@@ -28,7 +28,7 @@ def main_full(SUBSET_SIZE):
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
 
-
+    print(train.columns)
     bias.Bias(items=True, users=True, damping=0).fit(train)
 
 
