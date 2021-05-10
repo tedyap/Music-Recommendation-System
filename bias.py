@@ -9,7 +9,7 @@ Usage:
 from lenskit.algorithms import bias
 import pandas as pd
 
-def get_data(spark, file_name, frac_keep):
+def get_data(file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
     df = df.sample(False, frac_keep, 1)
