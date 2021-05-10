@@ -56,7 +56,7 @@ def main_full(spark,SUBSET_SIZE):
 
     count = 0
     best_model = None
-    best_rmse = None
+    best_map = None
     stats = []
     for rnk in ranks:
         for reg in regs:
@@ -69,7 +69,7 @@ def main_full(spark,SUBSET_SIZE):
             predictions=predictions.filter(predictions.prediction_rank<=500)
             
             metrics_df=predictions.select(['prediction_rank','count_rank'])
-            metrics = RankingMetrics(metrics_df)
+            metrics = RankingMetrics(metrics_df.rdd)
             MAP=metrics.meanAveragePrecision
             
             print(MAP)
@@ -83,15 +83,15 @@ def main_full(spark,SUBSET_SIZE):
 
             if count == 0:
                 best_model = model
-                best_rmse = rmse
-                stats = [rnk, reg, rmse]
+                best_map = MAP
+                stats = [rnk, reg, rmse,MAP]
                 count += 1
             else:
-                if rsme < best_rmse:
+                if MAP < best_map:
                     best_model = model
-                    best_rmse = rmse
-                    stats = [rnk, reg, rmse]
-    print('Best model: Rank: {}, RegParam: {}, RMSE: {}'.format(*stats))
+                    best_map = MAP
+                    stats = [rnk, reg, rmse, MAP]
+    print('Best model: Rank: {}, RegParam: {}, RMSE: {}, MAP: {}'.format(*stats))
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
