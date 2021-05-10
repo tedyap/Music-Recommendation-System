@@ -83,7 +83,7 @@ def main_full(spark,SUBSET_SIZE):
             for k in true_dict:
                 list2.append(true_dict[k])
                 
-            predictionAndLabels = spark.sparkContext.parallelize(list2)
+            predictionAndLabels = sc.parallelize(list2)
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
             
@@ -149,6 +149,9 @@ if __name__ == "__main__":
 
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
+    
+    conf = SparkConf().setAppName("part1").setMaster("local")
+    sc = SparkContext(conf=conf)
 
     SUBSET_SIZE = .01
     # Call our main routine
