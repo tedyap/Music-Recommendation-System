@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Starter Pyspark Script for students to complete for their Lab 3 Assignment.
-Usage:
-    $ spark-submit main.py <student_netID>
-"""
 
 
 from lenskit.algorithms import bias
@@ -18,18 +14,14 @@ def get_data(file_name, frac_keep):
 
 
 def main_full(SUBSET_SIZE):
-    '''Main routine for Final Project
-    Parameters
-    ----------
-    spark : SparkSession object
-    '''
+
     # load and sample from datasets
     train = get_data('cf_train_new', SUBSET_SIZE)
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
 
-    print(train.columns)
-    bias.Bias(items=True, users=True, damping=0).fit(train)
+    print(train.describe())
+    b = bias.Bias(items=True, users=True, damping=0).fit(train)
 
 
 if __name__ == "__main__":
