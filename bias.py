@@ -6,26 +6,20 @@ from lenskit.algorithms import bias
 import pandas as pd
 
 def get_data(file_name, frac_keep):
-    # (['user_id', 'count', 'track_id'], dtype='object')
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
     df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
-    print(df.head())
-    # df['track_id'] = df['track_id'].astype(float)
-    # df['user_id'] = df['user_id'].astype(float)
     return df
 
 
 def main_full(SUBSET_SIZE):
-
-    # load and sample from datasets
     train = get_data('cf_train_new', SUBSET_SIZE)
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
 
-    print(train.describe())
     b = bias.Bias(items=True, users=True, damping=0).fit(train)
-
+    preds = [b.predict_for_user(x['user'], user['item']) for x in val.itterrows()]
+    print(len(preds))
 
 if __name__ == "__main__":
 
