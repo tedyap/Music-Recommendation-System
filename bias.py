@@ -6,16 +6,6 @@ Usage:
 """
 
 
-# And pyspark.sql to get the spark session
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml.evaluation import RegressionEvaluator
-from pyspark.ml.recommendation import ALS
-from pyspark.sql import Row
-
-from pyspark.sql.functions import *
-from pyspark.sql.window import Window
 import lenskit
 
 def get_data(spark, file_name, frac_keep):
@@ -49,7 +39,7 @@ def main_full(spark,SUBSET_SIZE):
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
 
-    bias.Bias(items=True)
+    bias.Bias(items=True, users=True, damping=0).fit(train)
 
 
 # Only enter this block if we're in main

@@ -16,7 +16,6 @@ from pyspark.sql import Row
 
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
-from lenskit.algorithms import bias
 
 
 def get_data(spark, file_name, frac_keep):
