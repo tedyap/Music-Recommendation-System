@@ -18,7 +18,7 @@ def main_full(SUBSET_SIZE):
     test = get_data('cf_test', SUBSET_SIZE)
 
     b = bias.Bias(items=True, users=True, damping=0).fit(train)
-    preds = [b.predict_for_user(x['user'], x['item']) for x in val.iterrows()]
+    preds = [b.predict_for_user(x[0], x[1]) for x in val.iterrows()]
     print(len(preds))
 
 if __name__ == "__main__":
