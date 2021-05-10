@@ -6,16 +6,19 @@ Usage:
 """
 
 
-import lenskit
+from lenskit.algorithms import bias
+import pandas as pd
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
-    df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}.parquet')
+    df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
     df = df.sample(False, frac_keep, 1)
+    # StringIndexing
+
     return df
 
 
-def main_full(spark,SUBSET_SIZE):
+def main_full(SUBSET_SIZE):
     '''Main routine for Final Project
     Parameters
     ----------
@@ -26,28 +29,12 @@ def main_full(spark,SUBSET_SIZE):
     val = get_data(spark, 'cf_validation', SUBSET_SIZE)
     test = get_data(spark, 'cf_test', SUBSET_SIZE)
 
-    # StringIndexing
-    for column in ['user', 'track']:
-        indexer = StringIndexer(inputCol=f'{column}_id', outputCol=f'{column}_idx', handleInvalid='keep')
-        indexed = indexer.fit(train)
-        train = indexed.transform(train)
-        val = indexed.transform(val)
-        test = indexed.transform(test)
-        indexer.write().overwrite().save(f'{column}_indexer')
-
-    train = train.select(['user_idx', 'count', 'track_idx'])
-    val = val.select(['user_idx', 'count', 'track_idx'])
-    test = test.select(['user_idx', 'count', 'track_idx'])
 
     bias.Bias(items=True, users=True, damping=0).fit(train)
 
 
-# Only enter this block if we're in main
 if __name__ == "__main__":
-
-    # Create the spark session object
-    spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
 
     SUBSET_SIZE = .01
     # Call our main routine
-    main_full(spark, SUBSET_SIZE)
+    main_full(SUBSET_SIZE)
