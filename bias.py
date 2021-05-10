@@ -20,7 +20,10 @@ def main_full(SUBSET_SIZE):
     b = bias.Bias(items=True, users=True, damping=0).fit(train)
     preds = [b.predict_for_user(user=row['user'], items=[row['item']]) for index, row in val.iterrows()]
     print(len(preds))
-    print(preds[1:10])
+    for pred in preds[1:10]:
+        print(pred)
+        print(type(pred))
+        print()
 
 if __name__ == "__main__":
 
