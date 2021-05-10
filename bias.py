@@ -25,9 +25,9 @@ def main_full(SUBSET_SIZE):
     spark : SparkSession object
     '''
     # load and sample from datasets
-    train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
-    val = get_data(spark, 'cf_validation', SUBSET_SIZE)
-    test = get_data(spark, 'cf_test', SUBSET_SIZE)
+    train = get_data('cf_train_new', SUBSET_SIZE)
+    val = get_data('cf_validation', SUBSET_SIZE)
+    test = get_data('cf_test', SUBSET_SIZE)
 
 
     bias.Bias(items=True, users=True, damping=0).fit(train)
