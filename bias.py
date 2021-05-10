@@ -9,7 +9,7 @@ def get_data(file_name, frac_keep):
     # (['user_id', 'count', 'track_id'], dtype='object')
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
     df = df.sample(replace=False, frac=frac_keep, random_state=1)
-    df.rename(columns={'count':'rating'}, inplace=True)
+    df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
     print(df.head())
     # df['track_id'] = df['track_id'].astype(float)
     # df['user_id'] = df['user_id'].astype(float)
