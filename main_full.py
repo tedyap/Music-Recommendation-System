@@ -9,7 +9,8 @@ Usage:
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 from pyspark.ml.feature import StringIndexer
-from pyspark.ml.evaluation import RegressionEvaluator, RankingMetrics
+from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row
 
