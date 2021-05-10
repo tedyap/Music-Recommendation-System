@@ -88,6 +88,9 @@ def main_full(spark,SUBSET_SIZE):
             MAP = metrics.meanAveragePrecision
             
             print(MAP)
+            
+            break
+        break
 
             
             
