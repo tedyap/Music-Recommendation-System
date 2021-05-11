@@ -81,8 +81,8 @@ def main_full(spark,SUBSET_SIZE):
             
             predictionAndLabels=[]
             for user in users:
-                count_items=p_count[user]["track_idx"][0:500]
-                prediction_items=p_prediction[user]["track_idx"][0:500]
+                count_items=p_count[user]["track_idx"].head(500)
+                prediction_items=p_prediction[user]["track_idx"].head(500)
                 predictionAndLabels.append((prediction_items,count_items))
                
             predictionAndLabels = sc.parallelize(predictionAndLabels)
