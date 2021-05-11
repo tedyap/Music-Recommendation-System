@@ -7,6 +7,7 @@ Usage:
 
 # And pyspark.sql to get the spark session
 from pyspark.sql import SparkSession
+from pyspark import SparkContext
 from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml.evaluation import RegressionEvaluator
@@ -83,7 +84,7 @@ def main_full(spark,SUBSET_SIZE):
             for k in true_dict:
                 list2.append(true_dict[k])
                 
-            predictionAndLabels = spark.sparkContext.parallelize(list2)
+            predictionAndLabels = sc.parallelize(list2)
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
             
@@ -149,6 +150,7 @@ if __name__ == "__main__":
 
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
+    sc =SparkContext.getOrCreate()
 
     SUBSET_SIZE = .01
     # Call our main routine
