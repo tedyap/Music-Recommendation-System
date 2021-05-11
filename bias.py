@@ -19,7 +19,7 @@ def main_full(SUBSET_SIZE):
     test = get_data('cf_test', SUBSET_SIZE)
 
 
-    for damp in [.5, 1, 2, 5]:
+    for damp in [.25, .5, 1, 2, 5, 10, 15]:
         b = bias.Bias(items=True, users=True, damping=damp).fit(train)
         preds = [b.predict_for_user(user=row['user'], items=[row['item']]).values[0] for index, row in val.iterrows()]
         true_preds = val['rating'].tolist()
