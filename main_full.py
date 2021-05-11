@@ -89,9 +89,9 @@ def main_full(spark,SUBSET_SIZE):
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
             NDCG=metrics.ndcgAt(500)
-            RECALL=metrics.recallAt(500)
+            MAPAT=metrics.precisionAt(500)
             
-            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, Recall is:{}".format(rnk,reg,MAP,NDCG,RECALL))
+            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, MAPAT is:{}".format(rnk,reg,MAP,NDCG,MAPAT))
             
             break
         break
