@@ -53,8 +53,8 @@ def main_full(spark,SUBSET_SIZE):
 
 
     # define paremeter values for parameter tuning
-    ranks = [5]#[5, 10, 15]
-    regs = [0.1]#[0.1, 1, 10]
+    ranks = [5, 10, 15]
+    regs = [0.1, 1, 10]
 
     count = 0
     best_model = None
@@ -89,12 +89,10 @@ def main_full(spark,SUBSET_SIZE):
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
             NDCG=metrics.ndcgAt(500)
-            PAT=metrics.precisionAt(500)
+            #PAT=metrics.precisionAt(500)
             
             print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, MAPAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
-            
-            break
-        break
+
 
             
             
@@ -155,6 +153,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = .01
+    SUBSET_SIZE = 1
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
