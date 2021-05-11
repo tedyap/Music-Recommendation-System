@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     # Create the spark session object
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
-    sc =SparkContext()
+    sc =SparkContext.getOrCreate()
 
     SUBSET_SIZE = .01
     # Call our main routine
