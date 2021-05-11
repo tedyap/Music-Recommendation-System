@@ -84,6 +84,7 @@ def main_full(spark,SUBSET_SIZE):
             for k in true_dict:
                 list2.append(true_dict[k])
                 
+            predictionAndLabels = sc.parallelize([ ([1, 6, 2, 7, 8, 3, 9, 10, 4, 5], [1, 2, 3, 4, 5]), ([4, 1, 5, 6, 2, 7, 3, 8, 9, 10], [1, 2, 3]),([1, 2, 3, 4, 5], [])])
             predictionAndLabels = sc.parallelize(list2)
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
