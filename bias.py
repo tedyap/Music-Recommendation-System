@@ -8,8 +8,7 @@ from sklearn.metrics import mean_squared_error
 
 def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
-    print(df.shape)
-    df = df.sample(replace=False, frac=frac_keep, random_state=1)
+    # df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
     return df
 
@@ -22,16 +21,17 @@ def main_full(SUBSET_SIZE):
     with open(f'/scratch/sk8520/temp/final-project-if_it_works_dont_touch_it/output.txt', mode='w') as f:
         f.write(f'{damps}\n')
         f.write('file sizes: \n')
-        f.write(f'train: {len(train)}')
-        f.write(f'val: {len(val)}')
-        f.write(f'test: {len(test)}')
+        f.write(f'train: {len(train)}\n')
+        f.write(f'val: {len(val)}\n')
+        f.write(f'test: {len(test)}\n')
 
         for damp in damps:
+            print(damp)
             b = bias.Bias(items=True, users=True, damping=damp).fit(train)
             preds = [b.predict_for_user(user=row['user'], items=[row['item']]).values[0] for index, row in val.iterrows()]
             true_preds = val['rating'].tolist()
             rmse = mean_squared_error(y_true=true_preds, y_pred=preds)
-            f.write(f'damping paramter: {damp} mean squared error: {rmse}\n')
+            f.write(f'damping parameter: {damp} mean squared error: {rmse}\n')
 
 if __name__ == "__main__":
 
