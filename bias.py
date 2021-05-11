@@ -8,6 +8,7 @@ from sklearn.metrics import average_precision_score
 
 def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
+    print(df.shape)
     df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
     return df
@@ -17,7 +18,6 @@ def main_full(SUBSET_SIZE):
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
 
-    print(train.shape())
 
     for damp in [.5, 1, 2, 5]:
         b = bias.Bias(items=True, users=True, damping=damp).fit(train)
