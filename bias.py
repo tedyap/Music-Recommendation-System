@@ -24,7 +24,7 @@ def main_full(SUBSET_SIZE):
         preds = [b.predict_for_user(user=row['user'], items=[row['item']]).values[0] for index, row in val.iterrows()]
         true_preds = val['rating'].tolist()
         print(true_preds[0], preds[0])
-        rmse = mean_squared_error(y_true=true_preds, y_score=preds)
+        rmse = mean_squared_error(y_true=true_preds, y_pred=preds)
         print(damp, rmse)
 
 if __name__ == "__main__":
