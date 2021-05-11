@@ -33,19 +33,6 @@ def main_full(spark,SUBSET_SIZE):
     spark : SparkSession object
     '''
     # load and sample from datasets
-    predictionAndLabels = sc.parallelize([ ([1, 6, 2, 7, 8, 3, 9, 10, 4, 5], [1, 2, 3, 4, 5]), ([4, 1, 5, 6, 2, 7, 3, 8, 9, 10], [1, 2, 3]),([1, 2, 3, 4, 5], [])])
-    predictionAndLabels = sc.parallelize(list2)
-    metrics = RankingMetrics(predictionAndLabels)
-    MAP = metrics.meanAveragePrecision
-    
-     if yes:
-         print('no')
-    
-    
-    
-    
-    
-    
     
     train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
     val = get_data(spark, 'cf_validation', SUBSET_SIZE)
@@ -81,25 +68,24 @@ def main_full(spark,SUBSET_SIZE):
            
             predictions=predictions.withColumn("count_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("count"))))
             predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
-            predictions=predictions.filter(predictions.prediction_rank<=500)
            
-   
-            true_dict = {} # create dictionary where key is user and value is tuple of count_rank list [0] and prediction_rank list [1]
+            predictions_rmse=predictions.filter(predictions.prediction_rank<=500)
+            evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
+            rmse = evaluator.evaluate(predictions_rmse)
+            
             p = predictions.toPandas()
-            for i in range(len(p)):
-                row = p.iloc[i,:] 
-                if row['user_idx'] in true_dict.keys():
-                    true_dict[row['user_idx']][0] += [row['count_rank']]
-                    true_dict[row['user_idx']][1] += [row['prediction_rank']]
-                else:
-                    true_dict[row['user_idx']] = [[row['count_rank']],[row['prediction_rank']]]
-             
-            list2 = []
-            for k in true_dict:
-                list2.append(true_dict[k])
-                
-            predictionAndLabels = sc.parallelize([ ([1, 6, 2, 7, 8, 3, 9, 10, 4, 5], [1, 2, 3, 4, 5]), ([4, 1, 5, 6, 2, 7, 3, 8, 9, 10], [1, 2, 3]),([1, 2, 3, 4, 5], [])])
-            predictionAndLabels = sc.parallelize(list2)
+            p_count=p.groupby("user_idx").sort_values("count_rank",False)
+            p_prediction=p.groupby("user_idx").sort_values("prediction_rank",False)
+            
+            users=p['user_idx'].unique().tolist()
+            
+            predictionAndLabels=[]
+            for user in users:
+                count_items=p_count[user]["track_idx"][0:500]
+                prediction_items=p_prediction[user]["track_idx"][0:500]
+                predictionAndLabels.append((prediction_items,count_items))
+               
+            predictionAndLabels = sc.parallelize(predictionAndLabels)
             metrics = RankingMetrics(predictionAndLabels)
             MAP = metrics.meanAveragePrecision
             
