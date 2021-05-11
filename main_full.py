@@ -22,7 +22,8 @@ import pandas as pd
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
     df = spark.read.parquet(f'hdfs:/user/bm106/pub/MSD/{file_name}.parquet')
-    df = df.sample(False, frac_keep, 1)
+    if frac_keep<1:
+        df = df.sample(False, frac_keep, 1)
     return df
 
 
@@ -150,6 +151,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 1
+    SUBSET_SIZE = 1.0
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
