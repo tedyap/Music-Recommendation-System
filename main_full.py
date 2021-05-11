@@ -33,6 +33,20 @@ def main_full(spark,SUBSET_SIZE):
     spark : SparkSession object
     '''
     # load and sample from datasets
+    predictionAndLabels = sc.parallelize([ ([1, 6, 2, 7, 8, 3, 9, 10, 4, 5], [1, 2, 3, 4, 5]), ([4, 1, 5, 6, 2, 7, 3, 8, 9, 10], [1, 2, 3]),([1, 2, 3, 4, 5], [])])
+    predictionAndLabels = sc.parallelize(list2)
+    metrics = RankingMetrics(predictionAndLabels)
+    MAP = metrics.meanAveragePrecision
+    
+     if yes:
+         print('no')
+    
+    
+    
+    
+    
+    
+    
     train = get_data(spark, 'cf_train_new', SUBSET_SIZE)
     val = get_data(spark, 'cf_validation', SUBSET_SIZE)
     test = get_data(spark, 'cf_test', SUBSET_SIZE)
