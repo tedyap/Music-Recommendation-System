@@ -74,15 +74,15 @@ def main_full(spark,SUBSET_SIZE):
             #rmse = evaluator.evaluate(predictions_rmse)
             
             p = predictions.toPandas()
-            p_count=p.groupby("user_idx").sort_values("count_rank",False)
-            p_prediction=p.groupby("user_idx").sort_values("prediction_rank",False)
+            p_count=p.sort_values(['user_idx','count_rank'],False)
+            p_prediction=p..sort_values(['user_idx','prediction_rank'],False)
             
             users=p['user_idx'].unique().tolist()
             
             predictionAndLabels=[]
             for user in users:
-                count_items=p_count[user]["track_idx"].head(500)
-                prediction_items=p_prediction[user]["track_idx"].head(500)
+                count_items=p_count[p_count['user_idx']==user]["track_idx"].head(500)
+                prediction_items=p_prediction[p_prediction['user_idx']==user]["track_idx"].head(500)
                 predictionAndLabels.append((prediction_items,count_items))
                
             predictionAndLabels = sc.parallelize(predictionAndLabels)
