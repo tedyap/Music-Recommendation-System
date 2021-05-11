@@ -75,7 +75,7 @@ def main_full(spark,SUBSET_SIZE):
             
             p = predictions.toPandas()
             p_count=p.sort_values(['user_idx','count_rank'],False)
-            p_prediction=p..sort_values(['user_idx','prediction_rank'],False)
+            p_prediction=p.sort_values(['user_idx','prediction_rank'],False)
             
             users=p['user_idx'].unique().tolist()
             
