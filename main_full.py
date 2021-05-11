@@ -91,7 +91,7 @@ def main_full(spark,SUBSET_SIZE):
             NDCG=metrics.ndcgAt(500)
             #PAT=metrics.precisionAt(500)
             
-            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, MAPAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
+            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}".format(rnk,reg,MAP,NDCG))
 
 
             
