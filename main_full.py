@@ -69,9 +69,9 @@ def main_full(spark,SUBSET_SIZE):
             predictions=predictions.withColumn("count_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("count"))))
             predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
            
-            predictions_rmse=predictions.filter(predictions.prediction_rank<=500)
-            evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
-            rmse = evaluator.evaluate(predictions_rmse)
+            #predictions_rmse=predictions.filter(predictions.prediction_rank<=500)
+            #evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
+            #rmse = evaluator.evaluate(predictions_rmse)
             
             p = predictions.toPandas()
             p_count=p.groupby("user_idx").sort_values("count_rank",False)
