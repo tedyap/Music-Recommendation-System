@@ -84,8 +84,7 @@ def main_full(spark,SUBSET_SIZE):
             userRecs=val_users.join(userRecs,'user_idx','inner')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
             pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('recommendations.track_idx','true_item').rdd 
-            pred_true_rdd = sc.parallelize(pred_true_rdd)
-            metrics = RankingMetrics(pred_true_rdd)
+            metrics = RankingMetrics(sc.parallelize(pred_true_rdd))
             map_ = metrics.meanAveragePrecision
             ndcg = metrics.ndcgAt(500)
             mpa = metrics.precisionAt(500)
