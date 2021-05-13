@@ -83,7 +83,8 @@ def main_full(spark,SUBSET_SIZE):
             userRecs = model.recommendForAllUsers(500)
             userRecs=val_users.join(userRecs,'user_idx','inner')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
-            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').rdd .map(lambda row: (row[1], row[2]))
+            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('recommendations.track_idx','true_item').rdd 
+            #.map(lambda row: (row[1], row[2]))
             metrics = RankingMetrics(pred_true_rdd)
             map_ = metrics.meanAveragePrecision
             ndcg = metrics.ndcgAt(500)
