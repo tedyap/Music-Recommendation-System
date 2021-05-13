@@ -89,7 +89,6 @@ def main_full(spark,SUBSET_SIZE):
             ndcg = metrics.ndcgAt(500)
             mpa = metrics.precisionAt(500)
             print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', mpa)
-            '''
             break
         break
             
