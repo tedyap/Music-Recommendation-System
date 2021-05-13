@@ -65,8 +65,33 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
             model = als.fit(train)
-            predictions = model.transform(val)
-           
+            #predictions = model.transform(val)
+            userRecs = model.recommendForAllUsers(500)
+            
+            predictionAndLabels=[]
+            
+            Counter=0
+            
+            for user in userRecs.select("user_idx").distinct().show():
+                predicted=userRecs.filter(userRecs.user_idx == user).select("recommendations").show()
+                actual=val.filter(userRecs.user_idx == user).select("track_idx").show()
+                predictionAndLabels.append((predicted,actual))
+                
+                if Counter==0:
+                    print("predicted is:",predicted)
+                    print("actual is:",actual)
+                
+                Counter+=1
+                
+            predictionAndLabels = sc.parallelize(predictionAndLabels)
+            metrics = RankingMetrics(predictionAndLabels)
+            MAP = metrics.meanAveragePrecision
+            NDCG=metrics.ndcgAt(500)
+            PAT=metrics.precisionAt(500)
+            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
+            
+        
+            '''
             predictions=predictions.withColumn("count_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("count"))))
             predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
            
@@ -92,7 +117,7 @@ def main_full(spark,SUBSET_SIZE):
             NDCG=metrics.ndcgAt(500)
             PAT=metrics.precisionAt(500)
             print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
-
+            '''
             
             
             
@@ -151,6 +176,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 1.0
+    SUBSET_SIZE = 0.01
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
