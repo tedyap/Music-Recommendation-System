@@ -66,7 +66,7 @@ def main_full(spark,SUBSET_SIZE):
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
             #predictions = model.transform(val)
-            userRecs = model.recommendForAllUsers(500).toPandas()
+            userRecs = model.recommendForAllUsers(500)
             
             v = val.groupBy('user_idx').select('track_idx').apply(lambda x: x.tolist())
             v.show(10)
