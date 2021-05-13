@@ -73,7 +73,7 @@ def main_full(spark,SUBSET_SIZE):
             Counter=0
             
             for user in userRecs.select("user_idx").distinct().show():
-                predicted=userRecs.filter(userRecs.user_idx == user).select("recommendations").show()
+                predicted=userRecs.filter(userRecs.user_idx == user).select("recommendations").show()[0]
                 actual=val.filter(userRecs.user_idx == user).select("track_idx").show()
                 predictionAndLabels.append((predicted,actual))
                 
