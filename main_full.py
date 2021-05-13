@@ -76,7 +76,7 @@ def main_full(spark,SUBSET_SIZE):
                     print(user.user_idx)
                     
                 p = userRecs.where(userRecs.user_idx == user.user_idx).select("recommendations.track_idx")
-                predicted = [row.recommendations.track_idx for row in p.collect()][0][0]
+                predicted = [row.track_idx for row in p.collect()][0]
                 
                 if Counter==0:
                     print(predicted)
