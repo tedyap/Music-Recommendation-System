@@ -69,7 +69,7 @@ def main_full(spark,SUBSET_SIZE):
             userRecs = model.recommendForAllUsers(500)
             
             # for testing
-            userRecs.show(5)
+            userRecs.show(1)
             users = [row.user_idx for row in userRecs.select("user_idx").collect()]
             print(users[0], users[1], usesr[2], users[3], users[4])
             p0 = userRecs.filter(userRecs.user_idx == users[0]).select("recommendations")
