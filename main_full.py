@@ -68,35 +68,50 @@ def main_full(spark,SUBSET_SIZE):
             #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
             
-            predictionAndLabels=[]
-            Counter=0
-            for user in userRecs.select("user_idx").collect():
+            user0 = userRecs.select('user_idx').collect()[0].user_idx
+            predicted0 = userRecs.where(userRecs.user_idx == user0).select("recommendations.track_idx").collect().track_idx[0]
+            actual0 = [row.track_idx for row in val.where(val.user_idx == user0).select("track_idx").collect()]
+            print(user0)
+            print(predicted0)
+            print(actual0)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+#             predictionAndLabels=[]
+#             Counter=0
+#             for user in userRecs.select("user_idx").collect():
                 
-                if Counter==0:
-                    print(user.user_idx)
+#                 if Counter==0:
+#                     print(user.user_idx)
                     
-                p = userRecs.where(userRecs.user_idx == user.user_idx).select("recommendations.track_idx")
-                predicted = [row.track_idx for row in p.collect()][0]
+#                 p = userRecs.where(userRecs.user_idx == user.user_idx).select("recommendations.track_idx")
+#                 predicted = [row.track_idx for row in p.collect()][0]
                 
-                if Counter==0:
-                    print(predicted)
+#                 if Counter==0:
+#                     print(predicted)
                
-                a = val.where(val.user_idx == user.user_idx).select("track_idx")
-                actual = [row.track_idx for row in a.collect()]
+#                 a = val.where(val.user_idx == user.user_idx).select("track_idx")
+#                 actual = [row.track_idx for row in a.collect()]
                 
-                if Counter==0:
-                    print(actual)
+#                 if Counter==0:
+#                     print(actual)
 
-                predictionAndLabels.append((predicted,actual))
+#                 predictionAndLabels.append((predicted,actual))
                 
-                Counter+=1
+#                 Counter+=1
                 
-            predictionAndLabels = sc.parallelize(predictionAndLabels)
-            metrics = RankingMetrics(predictionAndLabels)
-            MAP = metrics.meanAveragePrecision
-            NDCG=metrics.ndcgAt(500)
-            PAT=metrics.precisionAt(500)
-            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
+#             predictionAndLabels = sc.parallelize(predictionAndLabels)
+#             metrics = RankingMetrics(predictionAndLabels)
+#             MAP = metrics.meanAveragePrecision
+#             NDCG=metrics.ndcgAt(500)
+#             PAT=metrics.precisionAt(500)
+#             print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
             break
         break
             
