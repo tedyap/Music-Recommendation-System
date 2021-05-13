@@ -84,10 +84,10 @@ def main_full(spark,SUBSET_SIZE):
 #             Counter=0
 #             for user in userRecs.select("user_idx").collect():
                 
-#                 p=userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations") #should we use .where instead of .filter and "recommendations.track_idx" instead of just "recommendations" 
-#                 predicted = [row.recommendations for row in p.collect()][0][0]
+#                 p = userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations") #should we use .where instead of .filter and "recommendations.track_idx" instead of just "recommendations" (https://spark.apache.org/docs/2.2.0/api/python/pyspark.ml.html#pyspark.ml.recommendation.ALS) 
+#                 predicted = [row.recommendations for row in p.collect()][0][0] # shouldn't this be row.recommendations.track_idx
                
-#                 a=val.filter(userRecs.user_idx == user.user_idx).select("track_idx")
+#                 a = val.filter(userRecs.user_idx == user.user_idx).select("track_idx")
 #                 actual = [row.track_idx for row in a.collect()]
 
 #                 predictionAndLabels.append((predicted,actual))
