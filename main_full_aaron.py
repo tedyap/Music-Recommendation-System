@@ -68,8 +68,8 @@ def main_full(spark,SUBSET_SIZE):
             model = als.fit(train)
             #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
-            val=val.groupBy("user_idx").agg(expr("collect_list(track_idx) AS tracks"))
-            val.show(5)
+            val_list=val.groupBy("user_idx").agg(expr("collect_list(track_idx) AS tracks"))
+            val_list.show(5)
             break
         break
             
