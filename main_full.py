@@ -74,8 +74,12 @@ def main_full(spark,SUBSET_SIZE):
             
             for user in userRecs.select("user_idx").collect():
                 
-                predicted=userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations").collect()[0]
-                actual=val.filter(userRecs.user_idx == user.user_idx).select("track_idx").collect()
+                p=userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations")
+                predicted = [row.recommendations for row in p.collect()][0][0]
+               
+                a=val.filter(userRecs.user_idx == user.user_idx).select("track_idx")
+                actual = [row.track_idx for row in a.collect()]
+
                 predictionAndLabels.append((predicted,actual))
                 
                 if Counter==0:
