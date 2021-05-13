@@ -14,11 +14,23 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, Column
-from pyspark.sql.functions import expr
+import pyspark.sql.functions as F
 from pyspark import HiveContext
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 import pandas as pd
+
+from pyspark.sql import SparkSession
+from pyspark import SparkConf
+from pyspark.ml.feature import StringIndexer
+from pyspark.ml.recommendation import ALS
+from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.mllib.evaluation import RankingMetrics
+import pyspark.sql.functions as F
+from pyspark.sql.functions import expr
+import itertools as it
+import random
+import numpy as np
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
@@ -52,7 +64,8 @@ def main_full(spark,SUBSET_SIZE):
     train = train.select(['user_idx', 'count', 'track_idx'])
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
-
+    
+    true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
 
     # define paremeter values for parameter tuning
     ranks = [5, 10, 15]
@@ -66,10 +79,14 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
-            #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
-            val_list=val.groupBy("user_idx").agg(expr("collect_list(track_idx) AS tracks"))
-            val_list.show(5)
+            pred_label = res.select('user_idx','recommendations.track_idx')
+            pred_true_rdd = pred_label.join(F.broadcast(true_label), 'user_id_indexed', 'inner').rdd .map(lambda row: (row[1], row[2]))
+            metrics = RankingMetrics(pred_true_rdd)
+            map_ = metrics.meanAveragePrecision
+            ndcg = metrics.ndcgAt(500)
+            mpa = metrics.precisionAt(500)
+            print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', mpa)     
             break
         break
             
