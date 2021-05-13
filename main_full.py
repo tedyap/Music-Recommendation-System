@@ -72,9 +72,10 @@ def main_full(spark,SUBSET_SIZE):
             
             Counter=0
             
-            for user in userRecs.select("user_idx").rdd.flatMap(lambda x: x).collect():
-                predicted=userRecs.filter(userRecs.user_idx == user).select("recommendations").rdd.flatMap(lambda x: x).collect()[0]
-                actual=val.filter(userRecs.user_idx == user).select("track_idx").rdd.flatMap(lambda x: x).collect()
+            for user in userRecs.select("user_idx").collect():
+                
+                predicted=userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations").collect()[0]
+                actual=val.filter(userRecs.user_idx == user.user_idx).select("track_idx").collect()
                 predictionAndLabels.append((predicted,actual))
                 
                 if Counter==0:
