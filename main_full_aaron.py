@@ -81,7 +81,7 @@ def main_full(spark,SUBSET_SIZE):
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
             userRecs = model.recommendForAllUsers(500)
-            userRecs=val_users.join(userRecs,'user_idx','left')
+            userRecs=val_users.join(userRecs,'user_idx','inner')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
             pred_true_rdd = pred_label.join(F.broadcast(true_label), 'user_idx', 'inner').rdd .map(lambda row: (row[1], row[2]))
             metrics = RankingMetrics(pred_true_rdd)
