@@ -68,9 +68,12 @@ def main_full(spark,SUBSET_SIZE):
             #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
             
-            user0 = userRecs.select('user_idx').collect()[0].user_idx
-            predicted0 = userRecs.where(userRecs.user_idx == user0).select("recommendations.track_idx").collect().track_idx[0]
-            actual0 = [row.track_idx for row in val.where(val.user_idx == user0).select("track_idx").collect()]
+            userList = userRecs.select('user_idx').collect()
+            user0 = userList[0].user_idx
+            predictedList = userRecs.where(userRecs.user_idx == user0).select("recommendations.track_idx").collect()
+            predicted0 = predictedList.track_idx[0]
+            actualList = val.where(val.user_idx == user0).select("track_idx").collect()
+            actual0 = [row.track_idx for row in actualList]
             print(user0)
             print(predicted0)
             print(actual0)
