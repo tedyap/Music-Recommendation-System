@@ -70,6 +70,7 @@ def main_full(spark,SUBSET_SIZE):
             
             # for testing
             userRecs.show(1)
+            where(user_recs.user == 0).select("recommendations.item").collect()
             users = [row.user_idx for row in userRecs.select("user_idx").collect()]
             print(users[0], users[1], usesr[2], users[3], users[4])
             p0 = userRecs.filter(userRecs.user_idx == users[0]).select("recommendations")
@@ -83,7 +84,7 @@ def main_full(spark,SUBSET_SIZE):
 #             Counter=0
 #             for user in userRecs.select("user_idx").collect():
                 
-#                 p=userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations")
+#                 p=userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations") #should we use .where instead of .filter and "recommendations.track_idx" instead of just "recommendations" 
 #                 predicted = [row.recommendations for row in p.collect()][0][0]
                
 #                 a=val.filter(userRecs.user_idx == user.user_idx).select("track_idx")
