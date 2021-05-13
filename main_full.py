@@ -68,7 +68,7 @@ def main_full(spark,SUBSET_SIZE):
             #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
             
-            v = val.groupBy('user_idx').select('track_idx').apply(lambda x: x.tolist())
+            v = val.select('user_idx','track_idx').groupBy('user_idx').apply(lambda x: x.tolist())
             v.show(10)
             userRecs.show(10)
             
