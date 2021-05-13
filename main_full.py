@@ -14,7 +14,6 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, Column
-from pyspark.sql.functions import pandas_udf, ceil
 
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
@@ -69,64 +68,35 @@ def main_full(spark,SUBSET_SIZE):
             #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
             
-            def listify(x):
-                return x.tolist()
-            
-            v = val.select('user_idx','track_idx').groupBy('user_idx').applyInPandas(listify, schema="user_idx int, tracks list")
-            v.show(10)
-            userRecs.show(10)
-            
-            
-
-            
-            
-            
-#             for user in userRecs.select("user_idx").collect():
-#                 p = spark.sql("SELECT recommendations.track_idx FROM userRecs WHERE user_idx = "+str(user.user_idx))
-#                 predicted = [row.track_idx for row in p.collect()][0]
-#                 print(predicted[0]
-#                 a = spark.sql("SELECT track_idx FROM val WHERE user_idx = "+str(user.user_idx))
-#                 actual = [row.track_idx for row in a.collect()][0]
+            predictionAndLabels=[]
+            Counter=0
+            for user in userRecs.select("user_idx").collect():
                 
-#                 val.filter(user_idx == users[0]).select("track_idx")
-            
-#             # for testing
-#             print(userRecs.count()
-#             where(user_recs.user == 0).select("recommendations.item").collect()
-#             users = [row.user_idx for row in userRecs.select("user_idx").collect()]
-#             print(users[0], users[1], usesr[2], users[3], users[4])
-#             p0 = userRecs.filter(userRecs.user_idx == users[0]).select("recommendations")
-#             predicted0 = [row.recommendations for row in p.collect()]
-#             predicted0_00 = predicted0[0][0]
-#             a0 = val.filter(userRecs.user_idx == users[0]).select("track_idx")
-#             actual0 = [row.track_idx for row in a.collect()]
-            
-            
-#             predictionAndLabels=[]
-#             Counter=0
-#             for user in userRecs.select("user_idx").collect():
+                if Counter==0:
+                    print(user.user_idx)
+                    
+                p = userRecs.where(userRecs.user_idx == user.user_idx).select("recommendations.track_idx")
+                predicted = [row.recommendations.track_idx for row in p.collect()][0][0]
                 
-#                 p = userRecs.filter(userRecs.user_idx == user.user_idx).select("recommendations") #should we use .where instead of .filter and "recommendations.track_idx" instead of just "recommendations" (https://spark.apache.org/docs/2.2.0/api/python/pyspark.ml.html#pyspark.ml.recommendation.ALS) 
-#                 predicted = [row.recommendations for row in p.collect()][0][0] # shouldn't this be row.recommendations.track_idx
+                if Counter==0:
+                    print(predicted)
                
-#                 a = val.filter(userRecs.user_idx == user.user_idx).select("track_idx")
-#                 actual = [row.track_idx for row in a.collect()]
+                a = val.where(val.user_idx == user.user_idx).select("track_idx")
+                actual = [row.track_idx for row in a.collect()]
+                
+                if Counter==0:
+                    print(actual)
 
-#                 predictionAndLabels.append((predicted,actual))
+                predictionAndLabels.append((predicted,actual))
                 
-#                 if Counter==0:
-#                     print(user)
-#                     print("predicted is:",predicted)
-#                     print("actual is:",actual)
+                Counter+=1
                 
-#                 Counter+=1
-                
-#             predictionAndLabels = sc.parallelize(predictionAndLabels)
-#             metrics = RankingMetrics(predictionAndLabels)
-#             MAP = metrics.meanAveragePrecision
-#             NDCG=metrics.ndcgAt(500)
-#             PAT=metrics.precisionAt(500)
-#             print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
+            predictionAndLabels = sc.parallelize(predictionAndLabels)
+            metrics = RankingMetrics(predictionAndLabels)
+            MAP = metrics.meanAveragePrecision
+            NDCG=metrics.ndcgAt(500)
+            PAT=metrics.precisionAt(500)
+            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
             break
         break
             
