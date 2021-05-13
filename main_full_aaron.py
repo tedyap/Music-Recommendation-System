@@ -65,6 +65,7 @@ def main_full(spark,SUBSET_SIZE):
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
     
+    val_users=val.select(['user_idx']).distinct()
     true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
 
     # define paremeter values for parameter tuning
@@ -80,10 +81,8 @@ def main_full(spark,SUBSET_SIZE):
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
             userRecs = model.recommendForAllUsers(500)
+            userRecs=val_users.join(userRecs,'user_idx','left')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
-            pred_true_rdd = pred_label.join(F.broadcast(true_label), 'user_idx', 'inner')
-            pred_true_rdd.show(5)
-            '''
             pred_true_rdd = pred_label.join(F.broadcast(true_label), 'user_idx', 'inner').rdd .map(lambda row: (row[1], row[2]))
             metrics = RankingMetrics(pred_true_rdd)
             map_ = metrics.meanAveragePrecision
