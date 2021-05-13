@@ -68,7 +68,10 @@ def main_full(spark,SUBSET_SIZE):
             #predictions = model.transform(val)
             userRecs = model.recommendForAllUsers(500)
             
-            v = val.select('user_idx','track_idx').groupBy('user_idx').apply(lambda x: x.tolist())
+            def listify(x):
+                return x.tolist()
+            
+            v = val.select('user_idx','track_idx').groupBy('user_idx').applyInPandas(listify, schema="user_idx int, tracks list")
             v.show(10)
             userRecs.show(10)
             
