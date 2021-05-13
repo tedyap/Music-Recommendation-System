@@ -93,33 +93,6 @@ def main_full(spark,SUBSET_SIZE):
         break
             
         
-            '''
-            predictions=predictions.withColumn("count_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("count"))))
-            predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
-           
-            #predictions_rmse=predictions.filter(predictions.prediction_rank<=500)
-            #evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
-            #rmse = evaluator.evaluate(predictions_rmse)
-            
-            p = predictions.toPandas()
-            p_count=p.sort_values(['user_idx','count_rank'],False)
-            p_prediction=p.sort_values(['user_idx','prediction_rank'],False)
-            
-            users=p['user_idx'].unique().tolist()
-            
-            predictionAndLabels=[]
-            for user in users:
-                count_items=p_count[p_count['user_idx']==user]["track_idx"].head(500).tolist()
-                prediction_items=p_prediction[p_prediction['user_idx']==user]["track_idx"].head(500).tolist()
-                predictionAndLabels.append((prediction_items,count_items))
-               
-            predictionAndLabels = sc.parallelize(predictionAndLabels)
-            metrics = RankingMetrics(predictionAndLabels)
-            MAP = metrics.meanAveragePrecision
-            NDCG=metrics.ndcgAt(500)
-            PAT=metrics.precisionAt(500)
-            print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
-            '''
             
             
             
