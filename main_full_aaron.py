@@ -14,7 +14,8 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, Column
-
+from pyspark.sql.functions import expr
+from pyspark import HiveContext
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 import pandas as pd
@@ -66,12 +67,11 @@ def main_full(spark,SUBSET_SIZE):
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
             #predictions = model.transform(val)
-            userRecs = model.recommendForAllUsers(500).toPandas()
-            
-            v = val.groupBy('user_idx').select('track_idx').apply(lambda x: x.tolist())
-            v.show(10)
-            userRecs.show(10)
-            
+            userRecs = model.recommendForAllUsers(500)
+            val=val.groupBy("user_idx").agg(expr("collect_list(track_idx) AS tracks"))
+            val.show(5)
+            break
+        break
             
 
             
@@ -123,8 +123,7 @@ def main_full(spark,SUBSET_SIZE):
 #             NDCG=metrics.ndcgAt(500)
 #             PAT=metrics.precisionAt(500)
 #             print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
-            break
-        break
+            
             
         
             
