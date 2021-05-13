@@ -13,7 +13,7 @@ from pyspark.ml.feature import StringIndexer
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.ml.recommendation import ALS
-from pyspark.sql import Row
+from pyspark.sql import Row, Column
 
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
@@ -66,18 +66,36 @@ def main_full(spark,SUBSET_SIZE):
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
             #predictions = model.transform(val)
-            userRecs = model.recommendForAllUsers(500)
+            userRecs = model.recommendForAllUsers(500).toPandas()
             
-            # for testing
-            userRecs.show(1)
-            where(user_recs.user == 0).select("recommendations.item").collect()
-            users = [row.user_idx for row in userRecs.select("user_idx").collect()]
-            print(users[0], users[1], usesr[2], users[3], users[4])
-            p0 = userRecs.filter(userRecs.user_idx == users[0]).select("recommendations")
-            predicted0 = [row.recommendations for row in p.collect()]
-            predicted0_00 = predicted0[0][0]
-            a0 = val.filter(userRecs.user_idx == users[0]).select("track_idx")
-            actual0 = [row.track_idx for row in a.collect()]
+            v = val.groupBy('user_idx').select('track_idx').apply(lambda x: x.tolist())
+            v.show(10)
+            userRecs.show(10)
+            
+            
+
+            
+            
+            
+#             for user in userRecs.select("user_idx").collect():
+#                 p = spark.sql("SELECT recommendations.track_idx FROM userRecs WHERE user_idx = "+str(user.user_idx))
+#                 predicted = [row.track_idx for row in p.collect()][0]
+#                 print(predicted[0]
+#                 a = spark.sql("SELECT track_idx FROM val WHERE user_idx = "+str(user.user_idx))
+#                 actual = [row.track_idx for row in a.collect()][0]
+                
+#                 val.filter(user_idx == users[0]).select("track_idx")
+            
+#             # for testing
+#             print(userRecs.count()
+#             where(user_recs.user == 0).select("recommendations.item").collect()
+#             users = [row.user_idx for row in userRecs.select("user_idx").collect()]
+#             print(users[0], users[1], usesr[2], users[3], users[4])
+#             p0 = userRecs.filter(userRecs.user_idx == users[0]).select("recommendations")
+#             predicted0 = [row.recommendations for row in p.collect()]
+#             predicted0_00 = predicted0[0][0]
+#             a0 = val.filter(userRecs.user_idx == users[0]).select("track_idx")
+#             actual0 = [row.track_idx for row in a.collect()]
             
             
 #             predictionAndLabels=[]
@@ -167,6 +185,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 0.01
+    SUBSET_SIZE = 0.05
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
