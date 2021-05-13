@@ -80,7 +80,11 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
-            userRecs = model.recommendForAllUsers(500)
+            
+            
+            user_subset = val.select('user_idx').distinct()
+            userRecs = als_model.recommendForUserSubset(user_subset, 500)
+            #userRecs = model.recommendForAllUsers(500)
             userRecs=val_users.join(userRecs,'user_idx','inner')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
             pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('recommendations.track_idx','true_item')
