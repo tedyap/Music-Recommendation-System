@@ -64,8 +64,6 @@ def main_full(spark,SUBSET_SIZE):
     train = train.select(['user_idx', 'count', 'track_idx'])
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
-    
-    val_users=val.select(['user_idx']).distinct()
     true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
 
     # define paremeter values for parameter tuning
@@ -80,14 +78,10 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
-            
-            
             user_subset = val.select('user_idx').distinct()
             userRecs = model.recommendForUserSubset(user_subset, 500)
-            #userRecs = model.recommendForAllUsers(500)
-            userRecs=val_users.join(userRecs,'user_idx','inner')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
-            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('recommendations.track_idx','true_item')
+            pred_true_rdd = pred_label.join(F.broadcast(true_label), 'user_idx', 'inner').select('recommendations.track_idx','true_item')
             metrics = RankingMetrics(sc.parallelize(pred_true_rdd.rdd))
             map_ = metrics.meanAveragePrecision
             ndcg = metrics.ndcgAt(500)
