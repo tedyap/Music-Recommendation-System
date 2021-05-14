@@ -65,6 +65,8 @@ def main_full(spark,SUBSET_SIZE):
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
     true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
+    val.show(20)
+    true_label.show(20)
 
     # define paremeter values for parameter tuning
     ranks = [5, 10, 15]
@@ -111,6 +113,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 1
+    SUBSET_SIZE = 0.01
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
