@@ -44,8 +44,6 @@ def main_full(SUBSET_SIZE):
             for index, row in val.iterrows():
                 pred = b.predict_for_user(user=row['user'], items=items).values
                 max_item_position = np.argmax(pred)
-                print(items[max_item_position], pred[np.argmax(pred)])
-                import sys; sys.exit()
                 preds.append(items[max_item_position])
 
             score = average_precision_score(preds, true_preds)
