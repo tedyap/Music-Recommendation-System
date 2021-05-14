@@ -81,7 +81,7 @@ def main_full(spark,SUBSET_SIZE):
             user_subset = val.select('user_idx').distinct()
             userRecs = model.recommendForUserSubset(user_subset, 500)
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
-            pred_true_rdd = pred_label.join(F.broadcast(true_label), 'user_idx', 'inner').select('track_idx','true_item')
+            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
             metrics = RankingMetrics(pred_true_rdd.rdd)
             map_ = metrics.meanAveragePrecision
             ndcg = metrics.ndcgAt(500)
@@ -195,6 +195,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 1
+    SUBSET_SIZE = 0.01
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
