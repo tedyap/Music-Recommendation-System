@@ -4,7 +4,7 @@
 
 from lenskit.algorithms import bias
 import pandas as pd
-from sklearn.metrics import mean_squared_error, average_precision_score
+from sklearn.metrics import mean_squared_error, average_precision_score, accuracy_score
 import numpy as np
 
 def get_data(file_name, frac_keep):
@@ -46,7 +46,7 @@ def main_full(SUBSET_SIZE):
                 max_item_position = np.argmax(pred)
                 preds.append(items[max_item_position])
 
-            score = average_precision_score(preds, true_preds)
+            score = accuracy_score(preds, true_preds)
             print(score)
 
 if __name__ == "__main__":
