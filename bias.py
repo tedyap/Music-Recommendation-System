@@ -5,6 +5,7 @@
 from lenskit.algorithms import bias
 import pandas as pd
 from sklearn.metrics import mean_squared_error, average_precision_score
+import numpy as np
 
 def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
@@ -42,7 +43,7 @@ def main_full(SUBSET_SIZE):
             preds = []
             for index, row in val.iterrows():
                 pred = b.predict_for_user(user=row['user'], items=items).values
-                max_item_position = pred.index(max(pred))
+                max_item_position = np.argmax(pred)
                 preds.append(items[max_item_position])
 
             score = average_precision_score(preds, true_preds)
