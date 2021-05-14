@@ -83,7 +83,7 @@ def main_full(spark,SUBSET_SIZE):
             
             
             user_subset = val.select('user_idx').distinct()
-            userRecs = als_model.recommendForUserSubset(user_subset, 500)
+            userRecs = model.recommendForUserSubset(user_subset, 500)
             #userRecs = model.recommendForAllUsers(500)
             userRecs=val_users.join(userRecs,'user_idx','inner')
             pred_label = userRecs.select('user_idx','recommendations.track_idx')
