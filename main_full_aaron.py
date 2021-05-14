@@ -87,13 +87,7 @@ def main_full(spark,SUBSET_SIZE):
             ndcg = metrics.ndcgAt(500)
             mpa = metrics.precisionAt(500)
             print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', mpa)
-            break
-        break
-            
-
-            
-            
-            
+           
 #             for user in userRecs.select("user_idx").collect():
 #                 p = spark.sql("SELECT recommendations.track_idx FROM userRecs WHERE user_idx = "+str(user.user_idx))
 #                 predicted = [row.track_idx for row in p.collect()][0]
@@ -201,6 +195,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 0.01
+    SUBSET_SIZE = 1
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
