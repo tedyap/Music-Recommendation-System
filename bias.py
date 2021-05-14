@@ -28,6 +28,8 @@ def main_full(SUBSET_SIZE):
         f.write(f'val: {len(val)}\n')
         f.write(f'test: {len(test)}\n')
 
+
+        ## predict rating for each user, item pair
         # for damp in damps:
         #     print(damp)
         #     b = bias.Bias(items=True, users=True, damping=damp).fit(train)
@@ -38,7 +40,7 @@ def main_full(SUBSET_SIZE):
 
 
 
-        ## predict
+        ## predict top item for each user
         true_preds = val['item'].tolist()
         for damp in damps:
             print(damp)
@@ -48,11 +50,10 @@ def main_full(SUBSET_SIZE):
                 pred = b.predict_for_user(user=row['user'], items=items).values
                 max_item_position = np.argmax(pred)
                 preds.append(items[max_item_position])
-
-            print(preds[1:5])
-            print(true_preds[1:5])
             score = accuracy_score(preds, true_preds)
             print(score)
+
+
 
 if __name__ == "__main__":
 
