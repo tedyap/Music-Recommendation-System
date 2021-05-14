@@ -16,7 +16,7 @@ def get_data(file_name, frac_keep):
 def main_full(SUBSET_SIZE):
     train = get_data('cf_train_new', SUBSET_SIZE)
     val = get_data('cf_validation', SUBSET_SIZE)
-    test = get_data('cf_test', SUBSET_SIZE)
+    # test = get_data('cf_test', SUBSET_SIZE)
     damps = [.25] #.5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
     items = train['item'].tolist()
     items = list(set(items))
@@ -44,6 +44,8 @@ def main_full(SUBSET_SIZE):
             for index, row in val.iterrows():
                 pred = b.predict_for_user(user=row['user'], items=items).values
                 max_item_position = np.argmax(pred)
+                print(max_item_position)
+                import sys; sys.exit()
                 preds.append(items[max_item_position])
 
             score = average_precision_score(preds, true_preds)
