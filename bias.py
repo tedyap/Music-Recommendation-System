@@ -36,7 +36,10 @@ def main_full(SUBSET_SIZE):
         #     rmse = mean_squared_error(y_true=true_preds, y_pred=preds)
         #     f.write(f'damping parameter: {damp} mean squared error: {rmse}\n')
 
-        true_preds = val['rating'].tolist()
+
+
+        ## predict
+        true_preds = val['item'].tolist()
         for damp in damps:
             print(damp)
             b = bias.Bias(items=True, users=True, damping=damp).fit(train)
@@ -46,6 +49,8 @@ def main_full(SUBSET_SIZE):
                 max_item_position = np.argmax(pred)
                 preds.append(items[max_item_position])
 
+            print(preds[1:5])
+            print(true_preds[1:5])
             score = accuracy_score(preds, true_preds)
             print(score)
 
