@@ -4,7 +4,7 @@
 
 from lenskit.algorithms import bias
 import pandas as pd
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, average_precision_score
 
 def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
@@ -35,16 +35,18 @@ def main_full(SUBSET_SIZE):
         #     rmse = mean_squared_error(y_true=true_preds, y_pred=preds)
         #     f.write(f'damping parameter: {damp} mean squared error: {rmse}\n')
 
-
+        true_preds = val['rating'].tolist()
         for damp in damps:
             print(damp)
             b = bias.Bias(items=True, users=True, damping=damp).fit(train)
             preds = []
             for index, row in val.iterrows():
                 pred = b.predict_for_user(user=row['user'], items=items).values
-                preds.append(pred)
-        true_preds = val['rating'].tolist()
+                max_item_position = pred.index(max(pred))
+                preds.append(items[max_item_position])
 
+            score = average_precision_score(preds, true_preds)
+            print(score)
 
 if __name__ == "__main__":
 
