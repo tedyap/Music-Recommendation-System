@@ -14,10 +14,23 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, Column
-
+import pyspark.sql.functions as F
+from pyspark import HiveContext
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 import pandas as pd
+
+from pyspark.sql import SparkSession
+from pyspark import SparkConf
+from pyspark.ml.feature import StringIndexer
+from pyspark.ml.recommendation import ALS
+from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.mllib.evaluation import RankingMetrics
+import pyspark.sql.functions as F
+from pyspark.sql.functions import expr
+import itertools as it
+import random
+import numpy as np
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
@@ -51,7 +64,7 @@ def main_full(spark,SUBSET_SIZE):
     train = train.select(['user_idx', 'count', 'track_idx'])
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
-
+    true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
 
     # define paremeter values for parameter tuning
     ranks = [5, 10, 15]
@@ -65,110 +78,31 @@ def main_full(spark,SUBSET_SIZE):
         for reg in regs:
             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
             model = als.fit(train)
-            #predictions = model.transform(val)
-            userRecs = model.recommendForAllUsers(500)
+            user_subset = val.select('user_idx').distinct()
+            userRecs = model.recommendForUserSubset(user_subset, 500)
+            pred_label = userRecs.select('user_idx','recommendations.track_idx')
+            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
+            metrics = RankingMetrics(pred_true_rdd.rdd)
+            map_ = metrics.meanAveragePrecision
+            ndcg = metrics.ndcgAt(500)
+            precision = metrics.precisionAt(500)
+            print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', precision)
             
-            userList = userRecs.select('user_idx').collect()
-            user0 = userList[0].user_idx
-            predictedList = userRecs.where(userRecs.user_idx == user0).select("recommendations.track_idx").collect()
-            predicted0 = predictedList.track_idx[0]
-            actualList = val.where(val.user_idx == user0).select("track_idx").collect()
-            actual0 = [row.track_idx for row in actualList]
-            print(user0)
-            print(predicted0)
-            print(actual0)
-            
-            
-            
-            
-            
-            
-            
-            
-            
-#             predictionAndLabels=[]
-#             Counter=0
-#             for user in userRecs.select("user_idx").collect():
-                
-#                 if Counter==0:
-#                     print(user.user_idx)
-                    
-#                 p = userRecs.where(userRecs.user_idx == user.user_idx).select("recommendations.track_idx")
-#                 predicted = [row.track_idx for row in p.collect()][0]
-                
-#                 if Counter==0:
-#                     print(predicted)
-               
-#                 a = val.where(val.user_idx == user.user_idx).select("track_idx")
-#                 actual = [row.track_idx for row in a.collect()]
-                
-#                 if Counter==0:
-#                     print(actual)
-
-#                 predictionAndLabels.append((predicted,actual))
-                
-#                 Counter+=1
-                
-#             predictionAndLabels = sc.parallelize(predictionAndLabels)
-#             metrics = RankingMetrics(predictionAndLabels)
-#             MAP = metrics.meanAveragePrecision
-#             NDCG=metrics.ndcgAt(500)
-#             PAT=metrics.precisionAt(500)
-#             print("Rank is:{}, Reg is:{},MAP is:{},NDCG is:{}, PAT is:{}".format(rnk,reg,MAP,NDCG,PAT))
-            break
-        break
-            
-        
-            
-            
-            
-#             print(predictions)
-            
-#             metrics_df=predictions.select(['prediction_rank','count_rank'])
-#             metrics = RankingMetrics(metrics_df.rdd)
-#             MAP=metrics.meanAveragePrecision
-            
-#             #iterate over each row in predictions dataframe
-#             #append ()
-            
-#             evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
-#             rmse = evaluator.evaluate(predictions)
-            
-#             print('Current model: Rank:'+str(rnk)+', RegParam: '+str(reg)+', RMSE: '+str(rmse)+"MAP: "+str(MAP))
-
-#             #userRecs = model.recommendForAllUsers(500).show(5)
-
-#             if count == 0:
-#                 best_model = model
-#                 best_map = MAP
-#                 stats = [rnk, reg, rmse,MAP]
-#                 count += 1
-#             else:
-#                 if MAP < best_map:
-#                     best_model = model
-#                     best_map = MAP
-#                     stats = [rnk, reg, rmse, MAP]
-#     print('Best model: Rank: {}, RegParam: {}, RMSE: {}, MAP: {}'.format(*stats))
-    
-#     rnk=stats[0]
-#     reg=stats[1]
-    
-#     als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", implicitPrefs=True, coldStartStrategy="drop")
+    # best model parameters based on ___ metric: ____ rank and ____ regParam
+    # performance of best model
+#     rnk = 
+#     reg = 
+#     als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
 #     model = als.fit(train)
-#     predictions = model.transform(test)
-    
-#     predictions=predictions.withColumn("count_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("count"))))
-#     predictions=predictions.withColumn("prediction_rank", rank().over(Window.partitionBy("user_idx").orderBy(desc("prediction"))))
-#     predictions=predictions.filter(predictions.prediction_rank<=500)
-            
-#     metrics_df=predictions.select(['prediction_rank','count_rank'])
-#     metrics = RankingMetrics(metrics_df.rdd)
-#     MAP=metrics.meanAveragePrecision
-    
-#     evaluator = RegressionEvaluator(metricName="rmse", labelCol="count_rank", predictionCol="prediction_rank")
-#     rmse = evaluator.evaluate(predictions)
-    
-#     print('Test Set: Rank:'+str(rnk)+', RegParam: '+str(reg)+', RMSE: '+str(rmse)+"MAP: "+str(MAP))
+#     user_subset = val.select('user_idx').distinct()
+#     userRecs = model.recommendForUserSubset(user_subset, 500)
+#     pred_label = userRecs.select('user_idx','recommendations.track_idx')
+#     pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
+#     metrics = RankingMetrics(pred_true_rdd.rdd)
+#     map_ = metrics.meanAveragePrecision
+#     ndcg = metrics.ndcgAt(500)
+#     precision = metrics.precisionAt(500)
+#     print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', precision)
     
 # Only enter this block if we're in main
 if __name__ == "__main__":
@@ -177,6 +111,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 0.05
+    SUBSET_SIZE = 1
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
