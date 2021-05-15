@@ -58,7 +58,9 @@ def main_full(SUBSET_SIZE):
             rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             print(average_utility.head())
-            average_utility = average_utility.sort(columns="rating")
+            average_utility = average_utility.sort_values()
+            print(average_utility.head())
+            
 
 if __name__ == "__main__":
 
