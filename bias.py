@@ -52,7 +52,7 @@ def main_full(SUBSET_SIZE):
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
             scores = []
-            for index, row in result.itterows():
+            for index, row in result.iterrows():
                 user = row['user']
                 items = row['item']
                 scores.append(map(top500, items))
