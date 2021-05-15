@@ -53,12 +53,13 @@ def main_full(SUBSET_SIZE):
         #     print(score)
 
 
-        # use plain popularity
+        # use normal popularity after bias adjusting
         for damp in damps:
             rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
             print(top500.head())
+            print(top500.index.valules.tolist()[1:5])
 
 
 if __name__ == "__main__":
