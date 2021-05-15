@@ -63,8 +63,7 @@ def main_full(SUBSET_SIZE):
             scores = []
             for index, row in result.iterrows():
                 top500 = bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
-                print(top500[0:10])
-                import sys; sys.exit()
+                top500 = top500.index.values.tolist()
                 score = map_score(top500, row['item'])
                 scores.append(score)
             print(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
