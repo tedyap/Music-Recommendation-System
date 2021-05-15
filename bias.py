@@ -18,8 +18,9 @@ def main_full(SUBSET_SIZE):
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
     damps = [.25] #.5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
-    items = train['item'].tolist()
-    items = list(set(items))
+    unique_items = list(set(train['item'].tolist()))
+    true_labels = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
+    print(true_labels.head())
 
     with open(f'/scratch/sk8520/temp/final-project-if_it_works_dont_touch_it/output.txt', mode='w') as f:
         f.write(f'{damps}\n')
