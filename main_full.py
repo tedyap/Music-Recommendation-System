@@ -65,8 +65,10 @@ def main_full(spark,SUBSET_SIZE):
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
     true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
-    val.filter(val.user_idx == 334614.0).show(20)
-    true_label.filter(val.user_idx == 334614.0).show(20)
+    val.filter(val.user_idx == 334614).show(20)
+    true_label.filter(val.user_idx == 334614).show(20)
+    val.filter(val.user_idx == '334614').show(20)
+        true_label.filter(val.user_idx == '334614').show(20)
 
 #     # define paremeter values for parameter tuning
 #     ranks = [5, 10, 15]
