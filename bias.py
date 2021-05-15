@@ -20,7 +20,7 @@ def main_full(SUBSET_SIZE):
     damps = [.25] #.5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
 
     gb = val.groupby(['user'])
-    result = gb['track'].unique()
+    result = gb['item'].unique()
     result = result.reset_index()
     print(result.head())
     import sys; sys.exit()
