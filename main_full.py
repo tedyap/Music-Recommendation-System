@@ -68,8 +68,12 @@ def main_full(spark,SUBSET_SIZE):
 
 
     # define paremeter values for parameter tuning
-    ranks = [5, 10, 15]
-    regs = [0.1, 1, 10]
+    ranks = [1, 10, 100] # default is 10
+    regs = [0.1, 1, 10] # default is 1
+    nblocks = [1, 10, 100] # default is 10
+    mIters = [1, 10, 100] # default is 10
+    alphas = [0.1, 1, 10] # default is 1
+    nonnegs = [True, False] # default is False
 
     count = 0
     best_model = None
@@ -77,19 +81,24 @@ def main_full(spark,SUBSET_SIZE):
     stats = []
     for rnk in ranks:
         for reg in regs:
-            als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
-            model = als.fit(train)
-            user_subset = val.select('user_idx').distinct()
-            userRecs = model.recommendForUserSubset(user_subset, 500)
-            pred_label = userRecs.select('user_idx','recommendations.track_idx')
-            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
-            metrics = RankingMetrics(pred_true_rdd.rdd)
-            map_ = metrics.meanAveragePrecision
-            ndcg = metrics.ndcgAt(500)
-            precision = metrics.precisionAt(500)
-            print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', precision)
+            for nblock in nblocks:
+                for mIter in mIters:
+                    for a in alphas:
+                        for nonneg in nonnegs:
+                            als = ALS(rank=rnk, regParam=reg, numBlocks = block, maxIter = mIter, alpha = a,  nonnegative = nonneg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
+                            model = als.fit(train)
+                            user_subset = val.select('user_idx').distinct()
+                            userRecs = model.recommendForUserSubset(user_subset, 500)
+                            pred_label = userRecs.select('user_idx','recommendations.track_idx')
+                            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
+                            metrics = RankingMetrics(pred_true_rdd.rdd)
+                            MAP = metrics.meanAveragePrecision
+                            ndcg = metrics.ndcgAt(500)
+                            precision = metrics.precisionAt(500)                            
+                            print('map score: {0}, ndcg score: {1}, precision score: {2}, rank: {3}, regParam: {4}, numBlocks: {5}, maxIter: {6}, alpha: {7}, nonnegatives: {8}'.format(MAP, ndcg, precision, rnk, reg, nblock, mIter, a, nonneg))
+
             
-    # best model parameters based on ___ metric: ____ rank and ____ regParam
+    # best model parameters based on ___ ranking metric: 
     # performance of best model
 #     rnk = 
 #     reg = 
@@ -112,6 +121,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 0.01
+    SUBSET_SIZE = 1
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
