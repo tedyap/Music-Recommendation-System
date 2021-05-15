@@ -9,7 +9,7 @@ import numpy as np
 
 def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
-    # df = df.sample(replace=False, frac=frac_keep, random_state=1)
+    df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
     return df
 
@@ -32,7 +32,9 @@ def main_full(SUBSET_SIZE):
     train = get_data('cf_train_new', SUBSET_SIZE)
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
-    damps = [.25, .5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
+    damps = [.25]#, .5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
+
+    unique_items = train['item'].unique()
 
     gb = val.groupby(['user'])
     result = gb['item'].unique()
@@ -48,13 +50,20 @@ def main_full(SUBSET_SIZE):
 
         for damp in damps:
             print(f'Computing {damp}')
-            rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
+            bias_model = bias.Bias(items=True, users=True, damping=damp).fit(train)
+            rating_bias = bias.Bias(items=True, users=True, damping=damp).transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
             scores = [map_score(top500, x) for x in result['item']]
             print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
             f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
+
+            for id, row in result.iterrows():
+                user = row['user']
+                rankings = bias_model.predict_for_user(user=user, items=unique_items)
+                print(rankings.head())
+
 
 if __name__ == "__main__":
 
