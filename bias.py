@@ -14,7 +14,7 @@ def get_data(file_name, frac_keep):
     return df
 
 
-def map(preds, truth):
+def map_score(preds, truth):
     num_positive, num_total = 0, 0
     final_score = 0
     truth = set(truth)
@@ -51,7 +51,7 @@ def main_full(SUBSET_SIZE):
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
-            scores = [map(top500, x) for x in df['item']]
+            scores = [map_score(top500, x) for x in df['item']]
             # for index, row in result.iterrows():
             #     user = row['user']
             #     items = row['item']
