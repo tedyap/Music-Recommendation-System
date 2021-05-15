@@ -47,12 +47,14 @@ def main_full(SUBSET_SIZE):
         f.write(f'test: {len(test)}\n')
 
         for damp in damps:
+            print(f'Computing {damp}')
             rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
             scores = [map_score(top500, x) for x in result['item']]
             print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
+            f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
 
 if __name__ == "__main__":
 
