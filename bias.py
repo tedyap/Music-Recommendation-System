@@ -58,8 +58,8 @@ def main_full(SUBSET_SIZE):
                 top500 = average_utility.nlargest(n=500)
                 top500 = top500.index.values.tolist()
                 scores = [map_score(top500, x) for x in result['item']]
-                print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}')
-                f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
+                print(f'Mean average precision for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}')
+                f.write(f'Mean average precision for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n')
 
 
             # scores = []
