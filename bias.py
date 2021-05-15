@@ -22,7 +22,7 @@ def main_full(SUBSET_SIZE):
     gb = val.groupby(['user'])
     result = gb['item'].unique()
     result = result.reset_index()
-    print(result.head())
+    print(result.head(30))
     import sys; sys.exit()
 
     with open(f'/scratch/sk8520/temp/final-project-if_it_works_dont_touch_it/output.txt', mode='w') as f:
@@ -68,7 +68,7 @@ def main_full(SUBSET_SIZE):
 
 if __name__ == "__main__":
 
-    SUBSET_SIZE = .005
+    SUBSET_SIZE = .05
     # Call our main routine
     main_full(SUBSET_SIZE)
 
