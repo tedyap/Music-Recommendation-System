@@ -19,8 +19,6 @@ def main_full(SUBSET_SIZE):
     test = get_data('cf_test', SUBSET_SIZE)
     damps = [.25] #.5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
     unique_items = list(set(train['item'].tolist()))
-    true_labels = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
-    print(true_labels.head())
 
     with open(f'/scratch/sk8520/temp/final-project-if_it_works_dont_touch_it/output.txt', mode='w') as f:
         f.write(f'{damps}\n')
@@ -42,19 +40,25 @@ def main_full(SUBSET_SIZE):
 
 
         ## predict top item for each user
-        true_preds = val['item'].tolist()
+        # true_preds = val['item'].tolist()
+        # for damp in damps:
+        #     print(damp)
+        #     b = bias.Bias(items=True, users=True, damping=damp).fit(train)
+        #     preds = []
+        #     for index, row in val.iterrows():
+        #         pred = b.predict_for_user(user=row['user'], items=items).values
+        #         max_item_position = np.argmax(pred)
+        #         preds.append(items[max_item_position])
+        #     score = accuracy_score(preds, true_preds)
+        #     print(score)
+
+
+        # use plain popularity
         for damp in damps:
-            print(damp)
-            b = bias.Bias(items=True, users=True, damping=damp).fit(train)
-            preds = []
-            for index, row in val.iterrows():
-                pred = b.predict_for_user(user=row['user'], items=items).values
-                max_item_position = np.argmax(pred)
-                preds.append(items[max_item_position])
-            score = accuracy_score(preds, true_preds)
-            print(score)
-
-
+            rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
+            average_utility = rating_bias.groupBy('item')['rating'].count()
+            print(average_utility.head())
+            average_utility = average_utility.sort(columns="rating")
 
 if __name__ == "__main__":
 
