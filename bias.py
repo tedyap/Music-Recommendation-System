@@ -49,10 +49,10 @@ def main_full(SUBSET_SIZE):
         f.write(f'val: {len(val)}\n')
         f.write(f'test: {len(test)}\n')
 
-        # for user_damp in damps:
-        #     for item_damp in damps:
-        #         print(f'\n\nComputing user_damp {user_damp} and item_damp {item_damp}')
-        #         bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
+        for user_damp in damps:
+            for item_damp in damps:
+                print(f'\n\nComputing user_damp {user_damp} and item_damp {item_damp}')
+                bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
         #         rating_bias = bias_model.transform(train)
         #         average_utility = rating_bias.groupby('item')['rating'].count()
         #         top500 = average_utility.nlargest(n=500)
@@ -61,17 +61,18 @@ def main_full(SUBSET_SIZE):
         #         print(f'Mean average precision for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}')
         #         f.write(f'Mean average precision for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n')
 
-        for damp in damps:
-            scores = []
-            bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
-            for index, row in result.iterrows():
-                print(len(row['item']))
-                top500 = bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
-                top500 = top500.index.values.tolist()
-                score = map_score(top500, row['item'])
-                scores.append(score)
-            print(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
-            f.write(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
+
+
+                scores = []
+                bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
+                for index, row in result.iterrows():
+                    print(len(row['item']))
+                    top500 = bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
+                    top500 = top500.index.values.tolist()
+                    score = map_score(top500, row['item'])
+                    scores.append(score)
+                print(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
+                f.write(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
 
 
 
