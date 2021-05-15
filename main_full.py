@@ -65,33 +65,29 @@ def main_full(spark,SUBSET_SIZE):
     val = val.select(['user_idx', 'count', 'track_idx'])
     test = test.select(['user_idx', 'count', 'track_idx'])
     true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
-    user  = val.select('user_idx').collect()[0].user_idx
-    print(user)
-    val.filter(val.user_idx == user).show(20)
-    true_label.filter(val.user_idx == user).show(20)
 
 
-#     # define paremeter values for parameter tuning
-#     ranks = [5, 10, 15]
-#     regs = [0.1, 1, 10]
+    # define paremeter values for parameter tuning
+    ranks = [5, 10, 15]
+    regs = [0.1, 1, 10]
 
-#     count = 0
-#     best_model = None
-#     best_map = None
-#     stats = []
-#     for rnk in ranks:
-#         for reg in regs:
-#             als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
-#             model = als.fit(train)
-#             user_subset = val.select('user_idx').distinct()
-#             userRecs = model.recommendForUserSubset(user_subset, 500)
-#             pred_label = userRecs.select('user_idx','recommendations.track_idx')
-#             pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
-#             metrics = RankingMetrics(pred_true_rdd.rdd)
-#             map_ = metrics.meanAveragePrecision
-#             ndcg = metrics.ndcgAt(500)
-#             precision = metrics.precisionAt(500)
-#             print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', precision)
+    count = 0
+    best_model = None
+    best_map = None
+    stats = []
+    for rnk in ranks:
+        for reg in regs:
+            als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
+            model = als.fit(train)
+            user_subset = val.select('user_idx').distinct()
+            userRecs = model.recommendForUserSubset(user_subset, 500)
+            pred_label = userRecs.select('user_idx','recommendations.track_idx')
+            pred_true_rdd = pred_label.join(true_label, 'user_idx', 'inner').select('track_idx','true_item')
+            metrics = RankingMetrics(pred_true_rdd.rdd)
+            map_ = metrics.meanAveragePrecision
+            ndcg = metrics.ndcgAt(500)
+            precision = metrics.precisionAt(500)
+            print('map score: ', map_, 'ndcg score: ', ndcg, 'map score: ', precision)
             
     # best model parameters based on ___ metric: ____ rank and ____ regParam
     # performance of best model
