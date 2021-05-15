@@ -59,7 +59,14 @@ def main_full(SUBSET_SIZE):
             print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}')
             f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
 
-            scores = [map_score(bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500), row['item']) for index, row in result.iterrows()]
+
+            scores = []
+            for index, row in result.iterrows():
+                top500 = map_score(bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
+                print(top500[0:10])
+                import sys; sys.exit()
+                score = map_score(top500, row['item'])
+                scores.append(score)
             print(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
             f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
 
