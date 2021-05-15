@@ -9,7 +9,7 @@ import numpy as np
 
 def get_data(file_name, frac_keep):
     df = pd.read_parquet(f'/scratch/work/courses/DSGA1004-2021/MSD/{file_name}.parquet')
-    df = df.sample(replace=False, frac=frac_keep, random_state=1)
+    # df = df.sample(replace=False, frac=frac_keep, random_state=1)
     df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
     return df
 
@@ -32,7 +32,7 @@ def main_full(SUBSET_SIZE):
     train = get_data('cf_train_new', SUBSET_SIZE)
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
-    damps = [.25]#, .5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
+    damps = [.25, .5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
 
     unique_items = train['item'].unique()
 
@@ -49,7 +49,7 @@ def main_full(SUBSET_SIZE):
         f.write(f'test: {len(test)}\n')
 
         for damp in damps:
-            print(f'Computing {damp}')
+            print(f'\n\nComputing {damp}')
             bias_model = bias.Bias(items=True, users=True, damping=damp).fit(train)
             rating_bias = bias_model.transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
@@ -67,7 +67,7 @@ def main_full(SUBSET_SIZE):
                 score = map_score(top500, row['item'])
                 scores.append(score)
             print(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
-            f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
+            f.write(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
 
 
 
