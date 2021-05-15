@@ -68,7 +68,7 @@ def main_full(spark,SUBSET_SIZE):
     val.filter(val.user_idx == 334614).show(20)
     true_label.filter(val.user_idx == 334614).show(20)
     val.filter(val.user_idx == '334614').show(20)
-        true_label.filter(val.user_idx == '334614').show(20)
+    true_label.filter(val.user_idx == '334614').show(20)
 
 #     # define paremeter values for parameter tuning
 #     ranks = [5, 10, 15]
