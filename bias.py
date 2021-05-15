@@ -51,7 +51,7 @@ def main_full(SUBSET_SIZE):
         for damp in damps:
             print(f'Computing {damp}')
             bias_model = bias.Bias(items=True, users=True, damping=damp).fit(train)
-            rating_bias = bias.Bias(items=True, users=True, damping=damp).transform(train)
+            rating_bias = bias_model.transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
