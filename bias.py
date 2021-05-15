@@ -71,3 +71,22 @@ if __name__ == "__main__":
     SUBSET_SIZE = .005
     # Call our main routine
     main_full(SUBSET_SIZE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+# true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
+# # list of tracks for each user, all positive and unsorted. could be a list of 50 or something
+#
+#
+# # dataframe of user, with list of top 500
+# userRecs = model.recommendForUserSubset(user_subset, 500)
