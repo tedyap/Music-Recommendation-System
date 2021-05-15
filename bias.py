@@ -56,13 +56,13 @@ def main_full(SUBSET_SIZE):
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
             scores = [map_score(top500, x) for x in result['item']]
-            print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
+            print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}')
             f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
 
-            for id, row in result.iterrows():
-                user = row['user']
-                rankings = bias_model.predict_for_user(user=user, items=unique_items)
-                print(rankings.head())
+            scores = [map_score(bias_model.predict_for_user(user=user, items=unique_items).nlargest(n=500), row['item']) for index, row in result.iterrows()]
+            print(f'Mean average precision for damping using predictions: {damp}: {sum(scores)/len(scores)}\n')
+            f.write(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}\n')
+
 
 
 if __name__ == "__main__":
