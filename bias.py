@@ -13,6 +13,21 @@ def get_data(file_name, frac_keep):
     df.rename(columns={'count':'rating', 'track_id':'item', 'user_id':'user'}, inplace=True)
     return df
 
+
+def map(preds, truth):
+    num_positive, num_total = 0, 0
+    final_score = 0
+    truth = set(truth)
+
+    for item in preds:
+        num_total += 1
+        if item in truth:
+            num_positive += 1
+            final_score += num_positive/num_total
+    final_score *= num_positive/num_total
+    return final_score
+
+
 def main_full(SUBSET_SIZE):
     train = get_data('cf_train_new', SUBSET_SIZE)
     val = get_data('cf_validation', SUBSET_SIZE)
@@ -21,9 +36,8 @@ def main_full(SUBSET_SIZE):
 
     gb = val.groupby(['user'])
     result = gb['item'].unique()
+    # has a list of tracks listened to per each user
     result = result.reset_index()
-    print(result.head(30))
-    import sys; sys.exit()
 
     with open(f'/scratch/sk8520/temp/final-project-if_it_works_dont_touch_it/output.txt', mode='w') as f:
         f.write(f'{damps}\n')
@@ -32,39 +46,17 @@ def main_full(SUBSET_SIZE):
         f.write(f'val: {len(val)}\n')
         f.write(f'test: {len(test)}\n')
 
-
-        ## predict rating for each user, item pair
-        # for damp in damps:
-        #     print(damp)
-        #     b = bias.Bias(items=True, users=True, damping=damp).fit(train)
-        #     preds = [b.predict_for_user(user=row['user'], items=[row['item']]).values[0] for index, row in val.iterrows()]
-        #     true_preds = val['rating'].tolist()
-        #     rmse = mean_squared_error(y_true=true_preds, y_pred=preds)
-        #     f.write(f'damping parameter: {damp} mean squared error: {rmse}\n')
-
-
-
-        ## predict top item for each user
-        # true_preds = val['item'].tolist()
-        # for damp in damps:
-        #     print(damp)
-        #     b = bias.Bias(items=True, users=True, damping=damp).fit(train)
-        #     preds = []
-        #     for index, row in val.iterrows():
-        #         pred = b.predict_for_user(user=row['user'], items=items).values
-        #         max_item_position = np.argmax(pred)
-        #         preds.append(items[max_item_position])
-        #     score = accuracy_score(preds, true_preds)
-        #     print(score)
-
-
-        # use normal popularity after bias adjusting
         for damp in damps:
             rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
             top500 = top500.index.values.tolist()
-
+            scores = []
+            for index, row in result.itterows():
+                user = row['user']
+                items = row['item']
+                scores.append(map(top500, items))
+            print(f'Mean average precision for damping: {damp}: {sum(scores)/len(scores)}')
 
 if __name__ == "__main__":
 
