@@ -18,7 +18,12 @@ def main_full(SUBSET_SIZE):
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
     damps = [.25] #.5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
-    unique_items = list(set(train['item'].tolist()))
+
+    gb = val.groupby(['user'])
+    result = gb['track'].unique()
+    result = result.reset_index()
+    print(result.head())
+    import sys; sys.exit()
 
     with open(f'/scratch/sk8520/temp/final-project-if_it_works_dont_touch_it/output.txt', mode='w') as f:
         f.write(f'{damps}\n')
@@ -58,8 +63,7 @@ def main_full(SUBSET_SIZE):
             rating_bias = bias.Bias(items=True, users=True, damping=damp).fit_transform(train)
             average_utility = rating_bias.groupby('item')['rating'].count()
             top500 = average_utility.nlargest(n=500)
-            print(top500.head())
-            print(top500.index.values.tolist()[1:5])
+            top500 = top500.index.values.tolist()
 
 
 if __name__ == "__main__":
