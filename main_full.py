@@ -6,20 +6,12 @@ Usage:
 """
 
 # And pyspark.sql to get the spark session
-from pyspark.sql import SparkSession
 from pyspark import SparkContext
 from pyspark.sql.functions import avg, min, count, desc, countDistinct, asc
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml.evaluation import RegressionEvaluator
-from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
-from pyspark.ml.recommendation import ALS
 from pyspark.sql import Row, Column
-import pyspark.sql.functions as F
 from pyspark import HiveContext
 from pyspark.sql.functions import *
 from pyspark.sql.window import Window
-import pandas as pd
-
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
 from pyspark.ml.feature import StringIndexer
@@ -31,6 +23,7 @@ from pyspark.sql.functions import expr
 import itertools as it
 import random
 import numpy as np
+import pandas as pd
 
 def get_data(spark, file_name, frac_keep):
     # function to read and sample from dataset with constant seed across datasets
