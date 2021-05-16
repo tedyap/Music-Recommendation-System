@@ -24,7 +24,7 @@ def map_score(preds, truth):
         if item in truth:
             num_positive += 1
             final_score += num_positive/num_total
-    final_score *= num_positive/num_total
+    final_score *= 1/ num_positive
     return final_score
 
 
@@ -36,8 +36,6 @@ def main_full(SUBSET_SIZE):
     damps = [2, 30, 100]
 
     unique_items = train['item'].unique()
-    print(list(set(unique_items[1:10])))
-    import sys; sys.exit()
 
     gb = val.groupby(['user'])
     result = gb['item'].unique()
@@ -81,11 +79,12 @@ if __name__ == "__main__":
 
     SUBSET_SIZE = .05
     # Call our main routine
-    main_full(SUBSET_SIZE)
+    # main_full(SUBSET_SIZE)
 
+    preds = [1, 2, 3, 4, 5, 6, 7]
+    truth = [2, 4, 5]
 
-
-
+    print(map_score(preds, truth))
 
 
 
