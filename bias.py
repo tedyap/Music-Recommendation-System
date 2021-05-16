@@ -37,6 +37,7 @@ def main_full(SUBSET_SIZE):
 
     unique_items = train['item'].unique()
     print(unique_items.head())
+    import sys; sys.exit()
 
     gb = val.groupby(['user'])
     result = gb['item'].unique()
