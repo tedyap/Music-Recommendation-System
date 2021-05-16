@@ -14,3 +14,40 @@ damping parameter: 30 mean squared error: 44.0929067549268
 damping parameter: 50 mean squared error: 44.98245813123705
 damping parameter: 100 mean squared error: 46.07359752543524
 damping parameter: 150 mean squared error: 46.58606625118608
+
+
+
+
+
+
+[2, 30, 100]
+file sizes: 
+train: 49824519
+val: 135938
+test: 1368430
+Mean average precision with popularity for user_damp 2 and item_damp 2: 0.004550810219708807
+Mean average precision with predictions for user_damp 2 and item_damp 2: 5.254560464007898e-08
+
+Mean average precision with popularity for user_damp 2 and item_damp 30: 0.004550810219708807
+Mean average precision with predictions for user_damp 2 and item_damp 30: 2.406409326992628e-06
+
+Mean average precision with popularity for user_damp 2 and item_damp 100: 0.004550810219708807
+Mean average precision with predictions for user_damp 2 and item_damp 100: 1.813330470584943e-05
+
+Mean average precision with popularity for user_damp 30 and item_damp 2: 0.004550810219708807
+Mean average precision with predictions for user_damp 30 and item_damp 2: 5.254560464007898e-08
+
+Mean average precision with popularity for user_damp 30 and item_damp 30: 0.004550810219708807
+Mean average precision with predictions for user_damp 30 and item_damp 30: 2.406409326992628e-06
+
+Mean average precision with popularity for user_damp 30 and item_damp 100: 0.004550810219708807
+Mean average precision with predictions for user_damp 30 and item_damp 100: 1.813330470584943e-05
+
+Mean average precision with popularity for user_damp 100 and item_damp 2: 0.004550810219708807
+Mean average precision with predictions for user_damp 100 and item_damp 2: 5.254560464007898e-08
+
+Mean average precision with popularity for user_damp 100 and item_damp 30: 0.004550810219708807
+Mean average precision with predictions for user_damp 100 and item_damp 30: 2.4064093269926283e-06
+
+Mean average precision with popularity for user_damp 100 and item_damp 100: 0.004550810219708807
+Mean average precision with predictions for user_damp 100 and item_damp 100: 1.813330470584943e-05
