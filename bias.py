@@ -36,6 +36,7 @@ def main_full(SUBSET_SIZE):
     damps = [2, 30, 100]
 
     unique_items = train['item'].unique()
+    print(unique_items.head())
 
     gb = val.groupby(['user'])
     result = gb['item'].unique()
@@ -72,7 +73,7 @@ def main_full(SUBSET_SIZE):
                     score = map_score(top500, row['item'])
                     scores.append(score)
                 print(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}')
-                f.write(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n')
+                f.write(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n\n')
 
 
 
