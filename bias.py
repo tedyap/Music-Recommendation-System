@@ -36,7 +36,7 @@ def main_full(SUBSET_SIZE):
     damps = [2, 30, 100]
 
     unique_items = train['item'].unique()
-    print(unique_items[1:10])
+    print(list(set(unique_items[1:10])))
     import sys; sys.exit()
 
     gb = val.groupby(['user'])
