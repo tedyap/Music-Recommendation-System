@@ -96,7 +96,7 @@ def main_full(spark,SUBSET_SIZE):
                             ndcg = metrics.ndcgAt(500)
                             precision = metrics.precisionAt(500)                            
                             print('map score: {0}, ndcg score: {1}, precision score: {2}, rank: {3}, regParam: {4}, numBlocks: {5}, maxIter: {6}, alpha: {7}, nonnegatives: {8}'.format(MAP, ndcg, precision, rnk, reg, nblock, mIter, a, nonneg))
-
+     break
             
     # best model parameters based on ___ ranking metric: 
     # performance of best model
