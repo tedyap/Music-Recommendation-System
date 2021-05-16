@@ -79,14 +79,7 @@ if __name__ == "__main__":
 
     SUBSET_SIZE = .05
     # Call our main routine
-    # main_full(SUBSET_SIZE)
-
-    preds = [1, 2, 3, 4, 5, 6, 7]
-    truth = [2, 4, 5]
-
-    print(map_score(preds, truth))
-
-
+    main_full(SUBSET_SIZE)
 
 
 
