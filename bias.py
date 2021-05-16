@@ -67,7 +67,6 @@ def main_full(SUBSET_SIZE):
                 scores = []
                 bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
                 for index, row in result.iterrows():
-                    print(len(row['item']))
                     top500 = bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
                     top500 = top500.index.values.tolist()
                     score = map_score(top500, row['item'])
