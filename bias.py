@@ -24,6 +24,8 @@ def map_score(preds, truth):
         if item in truth:
             num_positive += 1
             final_score += num_positive/num_total
+    if num_positive == 0:
+        return 0
     final_score *= 1/ num_positive
     return final_score
 
