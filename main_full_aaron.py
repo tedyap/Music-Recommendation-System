@@ -76,7 +76,7 @@ def main_full(spark,SUBSET_SIZE):
     stats = []
     for rnk in ranks:
         for reg in regs:
-            als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
+            als = ALS(rank=rnk, regParam=reg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop",implicitPrefs=True)
             model = als.fit(train)
             user_subset = val.select('user_idx').distinct()
             userRecs = model.recommendForUserSubset(user_subset, 500)
