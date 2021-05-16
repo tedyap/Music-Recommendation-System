@@ -85,7 +85,7 @@ def main_full(spark,SUBSET_SIZE):
                 for mIter in mIters:
                     for a in alphas:
                         for nonneg in nonnegs:
-                            als = ALS(rank=rnk, regParam=reg, numBlocks = block, maxIter = mIter, alpha = a,  nonnegative = nonneg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
+                            als = ALS(rank=rnk, regParam=reg, numBlocks = nblock, maxIter = mIter, alpha = a,  nonnegative = nonneg, userCol="user_idx", itemCol="track_idx", ratingCol="count", coldStartStrategy="drop")
                             model = als.fit(train)
                             user_subset = val.select('user_idx').distinct()
                             userRecs = model.recommendForUserSubset(user_subset, 500)
