@@ -195,6 +195,6 @@ if __name__ == "__main__":
     spark = SparkSession.builder.appName('part1').config('spark.blacklist.enabled', False).getOrCreate()
     sc =SparkContext.getOrCreate()
 
-    SUBSET_SIZE = 0.01
+    SUBSET_SIZE = 1
     # Call our main routine
     main_full(spark, SUBSET_SIZE)
