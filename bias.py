@@ -53,7 +53,7 @@ def main_full(SUBSET_SIZE):
 
         for user_damp in damps:
             for item_damp in damps:
-                print(f'\n\nComputing user_damp {user_damp} and item_damp {item_damp}')
+                print(f'\n\nComputing user_damp {user_damp} and item_damp {item_damp} and testing on test set')
                 bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
                 rating_bias = bias_model.transform(train)
                 average_utility = rating_bias.groupby('item')['rating'].count()
@@ -64,7 +64,7 @@ def main_full(SUBSET_SIZE):
                 f.write(f'Mean average precision with popularity for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n')
 
 
-                # 
+                #
                 # scores = []
                 # bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
                 # for index, row in result.iterrows():
