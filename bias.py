@@ -35,11 +35,11 @@ def main_full(SUBSET_SIZE):
     val = get_data('cf_validation', SUBSET_SIZE)
     test = get_data('cf_test', SUBSET_SIZE)
     # damps = [.25, .5, 1, 2, 5, 10, 15, 30, 50, 100, 150]
-    damps = [2, 30, 100]
+    damps = [2]#, 30, 100]
 
     unique_items = train['item'].unique()
 
-    gb = val.groupby(['user'])
+    gb = test.groupby(['user'])
     result = gb['item'].unique()
     # has a list of tracks listened to per each user
     result = result.reset_index()
@@ -64,18 +64,18 @@ def main_full(SUBSET_SIZE):
                 f.write(f'Mean average precision with popularity for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n')
 
 
-
-                scores = []
-                bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
-                for index, row in result.iterrows():
-                    top500 = bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
-                    top500 = top500.index.values.tolist()
-                    score = map_score(top500, row['item'])
-                    scores.append(score)
-                print(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}')
-                f.write(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n\n')
-
-
+                # 
+                # scores = []
+                # bias_model = bias.Bias(items=True, users=True, damping=(user_damp, item_damp)).fit(train)
+                # for index, row in result.iterrows():
+                #     top500 = bias_model.predict_for_user(user=row['user'], items=unique_items).nlargest(n=500)
+                #     top500 = top500.index.values.tolist()
+                #     score = map_score(top500, row['item'])
+                #     scores.append(score)
+                # print(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}')
+                # f.write(f'Mean average precision with predictions for user_damp {user_damp} and item_damp {item_damp}: {sum(scores)/len(scores)}\n\n')
+                #
+                #
 
 if __name__ == "__main__":
 
