@@ -67,7 +67,7 @@ def main_full(spark,SUBSET_SIZE):
     true_label = val.select('user_idx', 'track_idx').groupBy('user_idx').agg(expr('collect_list(track_idx) as true_item'))
 
     # define paremeter values for parameter tuning
-    ranks = [5, 10, 15]
+    ranks = [1, 10, 100]
     regs = [0.1, 1, 10]
 
     count = 0
