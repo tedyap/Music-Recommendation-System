@@ -1,0 +1,34 @@
+Validation set
+
+[2, 30, 100]
+file sizes: 
+train: 49824519
+val: 135938
+test: 1368430
+Mean average precision with popularity for user_damp 2 and item_damp 2: 0.05098649703961914
+Mean average precision with predictions for user_damp 2 and item_damp 2: 2.6272802320039496e-05
+
+Mean average precision with popularity for user_damp 2 and item_damp 30: 0.05098649703961914
+Mean average precision with predictions for user_damp 2 and item_damp 30: 0.0007282659577704673
+
+Mean average precision with popularity for user_damp 2 and item_damp 100: 0.05098649703961914
+Mean average precision with predictions for user_damp 2 and item_damp 100: 0.002664894656644831
+
+Mean average precision with popularity for user_damp 30 and item_damp 2: 0.05098649703961914
+Mean average precision with predictions for user_damp 30 and item_damp 2: 2.6272802320039496e-05
+
+Mean average precision with popularity for user_damp 30 and item_damp 30: 0.05098649703961914
+Mean average precision with predictions for user_damp 30 and item_damp 30: 0.0007282659577704673
+
+Mean average precision with popularity for user_damp 30 and item_damp 100: 0.05098649703961914
+Mean average precision with predictions for user_damp 30 and item_damp 100: 0.002664894656644831
+
+Mean average precision with popularity for user_damp 100 and item_damp 2: 0.05098649703961914
+Mean average precision with predictions for user_damp 100 and item_damp 2: 2.6272802320039496e-05
+
+Mean average precision with popularity for user_damp 100 and item_damp 30: 0.05098649703961914
+Mean average precision with predictions for user_damp 100 and item_damp 30: 0.0007282659577704672
+
+Mean average precision with popularity for user_damp 100 and item_damp 100: 0.05098649703961914
+Mean average precision with predictions for user_damp 100 and item_damp 100: 0.002664894656644831
+
